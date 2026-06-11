@@ -18,7 +18,7 @@ deploy_production:
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - echo "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
     - ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts 2>/dev/null
-    - ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} "cd /var/www/flashdrop && git pull origin main && mkdir -p uploads video && chmod -R 775 uploads video && sudo systemctl reload php8.3-fpm && sudo systemctl reload nginx"
+    - ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} "cd /var/www/flashdrop && git config --global --add safe.directory /var/www/flashdrop && git pull origin main && mkdir -p uploads video && chmod -R 775 uploads video && sudo systemctl reload php8.3-fpm && sudo systemctl reload nginx"
   only:
     - main
   when: manual
