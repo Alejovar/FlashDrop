@@ -38,19 +38,46 @@ deploy_production:
     - echo "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
     - ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts 2>/dev/null
     - |
-      ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} << 'REMOTE_SCRIPT'
-        if [ ! -d $DEPLOY_PATH/.git ]; then
-          mkdir -p $DEPLOY_PATH
-          cd $DEPLOY_PATH
-          git clone https://oauth2:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git .
-        else
-          cd $DEPLOY_PATH
-          git pull origin main
-        fi
-        chmod -R 775 uploads/ video/
+      ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} << EOF
+        DEPLOY_PATH="/var/www/flashdrop"
+        cd \$DEPLOY_PATH
+        git pull origin main
+        
+        # Crear config.php con variables de GitLab
+        cat > config.php << 'CONFIG'
+<?php
+define('DB_HOST', '${DB_HOST}');
+define('DB_NAME', '${DB_NAME}');
+define('DB_USER', '${DB_USER}');
+define('DB_PASS', '${DB_PASS}');
+define('MAX_UPLOAD_MB', 12);
+define('MAX_DIMENSION', 1920);
+define('JPEG_QUALITY', 88);
+define('UPLOADS_DIR', __DIR__ . '/uploads');
+define('UPLOADS_URL', 'uploads');
+define('WATERMARK_PATH', __DIR__ . '/assets/logo.png');
+define('WATERMARK_SCALE', 0.42);
+define('WATERMARK_MARGIN', 0.035);
+define('UPLOADS_PER_MINUTE_PER_IP', 4);
+define('FEED_POLL_SECONDS', 3);
+define('TOAST_SECONDS', 5);
+define('FEATURE_SECONDS', 9);
+define('SESSION_NAME', 'FLASHDROP_SESS');
+define('ADMIN_MAX_ATTEMPTS', 6);
+define('ADMIN_ATTEMPT_WINDOW_MIN', 10);
+CONFIG
+        
+        # Crear carpetas
+        mkdir -p \$DEPLOY_PATH/uploads \$DEPLOY_PATH/video
+        chmod -R 775 \$DEPLOY_PATH/uploads \$DEPLOY_PATH/video
+        chmod 600 config.php
+        
+        # Recargar servicios
         sudo systemctl reload php8.3-fpm
         sudo systemctl reload nginx
-      REMOTE_SCRIPT
+        
+        echo "✅ Deploy completado"
+      EOF
   only:
     - main
   when: manual
