@@ -1,0 +1,112 @@
+/* pantalla.css — estilos exclusivos de la pantalla grande */
+
+.pantalla-body {
+    overflow: hidden;
+    background: #000;
+}
+
+.visual-loop {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.logo-pantalla {
+    position: fixed;
+    top: 22px;
+    left: 26px;
+    width: clamp(160px, 16vw, 280px);
+    z-index: 10;
+    filter: drop-shadow(0 0 20px rgba(31, 86, 255, .7));
+}
+
+/* ---------- Toast MSN (esquina inferior derecha) ---------- */
+.msn-toast {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 300px;
+    z-index: 30;
+    border-radius: 10px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #11162e, #0b0e1e);
+    border: 1px solid rgba(140, 160, 230, .5);
+    box-shadow: 0 0 30px rgba(31, 86, 255, .55);
+    transform: translateY(140%);
+    transition: transform .45s cubic-bezier(.2, .9, .3, 1.1);
+}
+.msn-toast.visible { transform: translateY(0); }
+
+.toast-cuerpo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+}
+.toast-cuerpo img {
+    width: 74px;
+    height: 74px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid rgba(140, 160, 230, .5);
+}
+.toast-texto {
+    font-size: 13px;
+    color: #e8ecff;
+    line-height: 1.45;
+}
+
+/* ---------- Ventana destacada (esquina superior derecha) ---------- */
+.feature-window {
+    position: fixed;
+    top: 26px;
+    right: 26px;
+    z-index: 25;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #0b0e1e;
+    border: 1px solid rgba(140, 160, 230, .55);
+    box-shadow: 0 0 50px rgba(31, 86, 255, .65), 0 0 0 1px rgba(0,0,0,.8);
+    opacity: 0;
+    transform: scale(.7);
+    transition: opacity .5s ease, transform .5s cubic-bezier(.2, .9, .3, 1.15);
+}
+.feature-window.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+.feature-window.saliendo {
+    opacity: 0;
+    transform: scale(.85) translateY(-16px);
+    transition: opacity .6s ease, transform .6s ease;
+}
+
+/* La ventana se adapta a la orientación de la foto */
+.feature-window.vertical img   { height: min(64vh, 760px); width: auto; }
+.feature-window.horizontal img { width: min(38vw, 700px); height: auto; }
+.feature-window.cuadrada img   { width: min(30vw, 520px); height: auto; }
+
+.feature-window img {
+    display: block;
+    max-width: 42vw;
+    max-height: 68vh;
+}
+
+/* ---------- Overlay de inicio ---------- */
+.overlay-inicio {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: #04050d;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+}
+.overlay-inicio img { width: min(60%, 480px); }
+.overlay-inicio .btn { width: auto; padding: 16px 44px; font-size: 18px; }
+.overlay-inicio.oculto { display: none; }

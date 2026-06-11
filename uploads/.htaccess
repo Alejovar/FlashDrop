@@ -1,0 +1,7 @@
+# Nunca ejecutar código dentro de /uploads — solo servir imágenes.
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|phar|pl|py|cgi|sh)$">
+    Require all denied
+</FilesMatch>
+php_flag engine off
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .phar
+Options -ExecCGI -Indexes
