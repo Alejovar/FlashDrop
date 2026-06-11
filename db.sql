@@ -59,9 +59,7 @@ CREATE TABLE IF NOT EXISTS login_attempts (
     ip VARBINARY(16) NOT NULL,
     attempted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
-    KEY idx_ip_time (ip, attempted_at),
-    -- Purgar entradas más viejas de 30 minutos regularmente
-    CONSTRAINT chk_recent CHECK (attempted_at > DATE_SUB(NOW(), INTERVAL 1 HOUR))
+    KEY idx_ip_time (ip, attempted_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
