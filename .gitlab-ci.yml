@@ -14,7 +14,7 @@ validate_php:
   script:
     - find . -name "*.php" -type f ! -path "./vendor/*" -exec php -l {} \;
   only:
-    - FlashDrop
+    - main
 
 build_artifacts:
   stage: build
