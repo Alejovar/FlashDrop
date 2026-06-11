@@ -10,18 +10,18 @@ USE flashdrop;
 -- ============================================================
 CREATE TABLE photos (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    filename VARCHAR(64) NOT NULL UNIQUE,      -- nombre aleatorio .jpg (ej: a1b2c3d4e5f6g7h8.jpg)
-    width SMALLINT UNSIGNED NOT NULL,          -- ancho en píxeles
-    height SMALLINT UNSIGNED NOT NULL,         -- alto en píxeles
+    filename VARCHAR(64) NOT NULL UNIQUE,
+    width SMALLINT UNSIGNED NOT NULL,
+    height SMALLINT UNSIGNED NOT NULL,
     orientation ENUM('horizontal','vertical','cuadrada') NOT NULL DEFAULT 'vertical',
-    visible TINYINT(1) NOT NULL DEFAULT 1,     -- 0 = oculta (admin), 1 = en galería
-    uploader_ip VARBINARY(16) NOT NULL,        -- IP del cliente (inet_pton)
+    visible TINYINT(1) NOT NULL DEFAULT 1,
+    uploader_ip VARBINARY(16) NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE KEY uq_filename (filename),
-    KEY idx_visible_created (visible, created_at DESC),
-    KEY idx_created (created_at DESC)
+    KEY idx_visible_created (visible, created_at),
+    KEY idx_created (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
