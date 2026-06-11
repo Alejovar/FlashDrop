@@ -20,7 +20,7 @@ deploy_production:
     - ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts 2>/dev/null
     - ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} "sudo mkdir -p /var/www/flashdrop && sudo chown -R ${DEPLOY_USER}:www-data /var/www/flashdrop"
     - rsync -az --delete --exclude=".git" --exclude="uploads" -e "ssh -i ~/.ssh/deploy_key" ./ ${DEPLOY_USER}@${DEPLOY_HOST}:/var/www/flashdrop/
-    - ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} "cd /var/www/flashdrop && mkdir -p uploads video && chmod -R 775 uploads video && sudo chown -R ${DEPLOY_USER}:www-data /var/www/flashdrop && sudo systemctl reload php8.3-fpm && sudo systemctl reload nginx"
+    - ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} "cd /var/www/flashdrop && mysql -u root flashdrop < db.sql && mkdir -p uploads video && chmod -R 775 uploads video && sudo chown -R ${DEPLOY_USER}:www-data /var/www/flashdrop && sudo systemctl reload php8.3-fpm && sudo systemctl reload nginx"
   only:
     - main
   when: manual
