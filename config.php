@@ -1,15 +1,15 @@
 <?php
 // ============================================================
-//  AlejoFest Vol.21 — Configuración
+//  FLASHDROP — Configuración
 //  Copia este archivo como config.php y ajusta tus credenciales.
 //  NUNCA subas config.php a un repositorio público.
 // ============================================================
 
 // --- Base de datos ---
 define('DB_HOST', '127.0.0.1');
-define('DB_NAME', 'alejofest');
-define('DB_USER', 'alejofest_app');      // usuario con permisos SOLO sobre esta BD
-define('DB_PASS', 'CAMBIA_ESTA_CONTRASENA');
+define('DB_NAME', 'flashdrop');
+define('DB_USER', 'flashdrop_app');      // usuario con permisos SOLO sobre esta BD
+define('DB_PASS', 'xxxxxxxxxxxxxxxx');
 
 // --- Subidas ---
 define('MAX_UPLOAD_MB', 12);             // tamaño máximo del archivo original

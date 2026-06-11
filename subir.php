@@ -11,7 +11,7 @@ $csrf = af_csrf_token();
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="csrf" content="<?= e($csrf) ?>">
-<title>Subir foto — AlejoFest Vol.21</title>
+<title>Subir foto — FLASHDROP</title>
 <link rel="stylesheet" href="assets/css/y2k.css">
 </head>
 <body>
@@ -20,7 +20,7 @@ $csrf = af_csrf_token();
 
 <div class="contenedor">
     <a class="nav-volver" href="index.php">⬅ Volver al menú</a>
-    <img src="assets/logo.png" alt="AlejoFest Vol.21" class="logo-cabecera">
+    <img src="assets/logo.png" alt="FLASHDROP" class="logo-cabecera">
 
     <div class="msn-window">
         <div class="msn-titlebar">

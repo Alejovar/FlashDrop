@@ -13,7 +13,7 @@ af_security_headers();
 <meta name="poll-seconds"    content="<?= (int)FEED_POLL_SECONDS ?>">
 <meta name="toast-seconds"   content="<?= (int)TOAST_SECONDS ?>">
 <meta name="feature-seconds" content="<?= (int)FEATURE_SECONDS ?>">
-<title>Pantalla — AlejoFest Vol.21</title>
+<title>Pantalla — FLASHDROP</title>
 <link rel="stylesheet" href="assets/css/y2k.css">
 <link rel="stylesheet" href="assets/css/pantalla.css">
 </head>
@@ -23,7 +23,7 @@ af_security_headers();
 <video id="visual" class="visual-loop" src="video/loop.mp4" autoplay muted loop playsinline></video>
 
 <!-- Logo fijo -->
-<img src="assets/logo.png" alt="AlejoFest Vol.21" class="logo-pantalla">
+<img src="assets/logo.png" alt="FLASHDROP" class="logo-pantalla">
 
 <!-- Notificación estilo MSN (mini preview, 5 s) -->
 <div id="toast" class="msn-toast" hidden>
@@ -39,7 +39,7 @@ af_security_headers();
 <!-- Foto destacada (ventana superior derecha, 8–10 s) -->
 <div id="feature" class="feature-window" hidden>
     <div class="msn-titlebar">
-        <span class="titulo">AlejoFest Vol.21 — Foto en vivo 🔴</span>
+        <span class="titulo">FLASHDROP — Foto en vivo 🔴</span>
         <span class="controles"><span>_</span><span>□</span><span>✕</span></span>
     </div>
     <img id="feature-img" src="" alt="Foto destacada">
@@ -47,7 +47,7 @@ af_security_headers();
 
 <!-- Overlay de inicio (necesario para autoplay/fullscreen) -->
 <div id="inicio" class="overlay-inicio">
-    <img src="assets/logo.png" alt="AlejoFest Vol.21">
+    <img src="assets/logo.png" alt="FLASHDROP">
     <button class="btn" id="btn-iniciar" type="button">▶ Iniciar pantalla</button>
 </div>
 

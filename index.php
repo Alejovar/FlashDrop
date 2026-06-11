@@ -9,7 +9,7 @@ af_security_headers();
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>AlejoFest Vol.21</title>
+<title>FLASHDROP</title>
 <link rel="stylesheet" href="assets/css/y2k.css">
 </head>
 <body>
@@ -18,7 +18,7 @@ af_security_headers();
 <span class="estrella" style="top:48%; left:5%; animation-delay:1.4s;">✦</span>
 
 <div class="contenedor">
-    <img src="assets/logo.png" alt="AlejoFest Vol.21" class="logo-cabecera">
+    <img src="assets/logo.png" alt="FLASHDROP" class="logo-cabecera">
     <p class="subtitulo">★ La fiesta del milenio ★</p>
 
     <div class="msn-window">
@@ -31,7 +31,7 @@ af_security_headers();
                 <a class="btn" href="subir.php">📸 Tomar / subir mi foto</a>
                 <a class="btn secundario" href="galeria.php">🖼️ Ver todas las fotos</a>
             </div>
-            <p class="aviso">Tu foto sale en la pantalla grande con la marca oficial del AlejoFest Vol.21 ✨</p>
+            <p class="aviso">Tu foto sale en la pantalla grande con la marca oficial del FLASHDROP ✨</p>
         </div>
     </div>
 

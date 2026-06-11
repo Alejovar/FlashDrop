@@ -42,12 +42,12 @@ $csrf = af_csrf_token();
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Admin — AlejoFest Vol.21</title>
+<title>Admin — FLASHDROP</title>
 <link rel="stylesheet" href="../assets/css/y2k.css">
 </head>
 <body>
 <div class="contenedor">
-    <img src="../assets/logo.png" alt="AlejoFest Vol.21" class="logo-cabecera">
+    <img src="../assets/logo.png" alt="FLASHDROP" class="logo-cabecera">
     <p class="subtitulo">★ Panel de control ★</p>
 
     <div class="msn-window">
