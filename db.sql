@@ -8,7 +8,7 @@ USE flashdrop;
 -- ============================================================
 -- Tabla principal de fotos (con marca de agua estampada)
 -- ============================================================
-CREATE TABLE photos (
+CREATE TABLE IF NOT EXISTS photos (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     filename VARCHAR(64) NOT NULL UNIQUE,
     width SMALLINT UNSIGNED NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE photos (
 -- Cola FIFO para la pantalla grande
 -- Cada subida inserta una fila; el admin puede re-encolar con "Reproducir"
 -- ============================================================
-CREATE TABLE screen_queue (
+CREATE TABLE IF NOT EXISTS screen_queue (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     photo_id INT UNSIGNED NOT NULL,
     enqueued_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -41,7 +41,7 @@ CREATE TABLE screen_queue (
 -- ============================================================
 -- Tabla de administradores
 -- ============================================================
-CREATE TABLE admins (
+CREATE TABLE IF NOT EXISTS admins (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     username VARCHAR(40) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,      -- password_hash(password, PASSWORD_DEFAULT)
@@ -54,7 +54,7 @@ CREATE TABLE admins (
 -- ============================================================
 -- Throttling: intentos de login fallidos por IP
 -- ============================================================
-CREATE TABLE login_attempts (
+CREATE TABLE IF NOT EXISTS login_attempts (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     ip VARBINARY(16) NOT NULL,
     attempted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
