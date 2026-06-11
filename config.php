@@ -9,7 +9,7 @@
 define('DB_HOST', '127.0.0.1');
 define('DB_NAME', 'flashdrop');
 define('DB_USER', 'flashdrop_app');      // usuario con permisos SOLO sobre esta BD
-define('DB_PASS', 'xxxxxxxxxxxxxxxx');
+define('DB_PASS', 'WDo6MCOT5FNkLGrbANS++A==');
 
 // --- Subidas ---
 define('MAX_UPLOAD_MB', 12);             // tamaño máximo del archivo original

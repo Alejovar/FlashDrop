@@ -1,12 +1,6 @@
 stages:
   - validate
-  - build
   - deploy
-
-variables:
-  DEPLOY_USER: "deploy"
-  DEPLOY_PATH: "/var/www/flashdrop"
-  DEPLOY_HOST: "143.244.165.130"
 
 validate_php:
   stage: validate
@@ -16,68 +10,15 @@ validate_php:
   only:
     - main
 
-build_artifacts:
-  stage: build
-  image: alpine:latest
-  script:
-    - apk add --no-cache zip
-    - zip -rq flashdrop-build.zip . -x "*.git*" "node_modules/*" "uploads/*" "!uploads/.htaccess"
-  artifacts:
-    paths:
-      - flashdrop-build.zip
-    expire_in: 1 day
-  only:
-    - main
-
 deploy_production:
   stage: deploy
   image: alpine:latest
   script:
-    - apk add --no-cache openssh-client git
+    - apk add --no-cache openssh-client
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - echo "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
     - ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts 2>/dev/null
-    - |
-      ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} << EOF
-        DEPLOY_PATH="/var/www/flashdrop"
-        cd \$DEPLOY_PATH
-        git pull origin main
-        
-        # Crear config.php con variables de GitLab
-        cat > config.php << 'CONFIG'
-<?php
-define('DB_HOST', '${DB_HOST}');
-define('DB_NAME', '${DB_NAME}');
-define('DB_USER', '${DB_USER}');
-define('DB_PASS', '${DB_PASS}');
-define('MAX_UPLOAD_MB', 12);
-define('MAX_DIMENSION', 1920);
-define('JPEG_QUALITY', 88);
-define('UPLOADS_DIR', __DIR__ . '/uploads');
-define('UPLOADS_URL', 'uploads');
-define('WATERMARK_PATH', __DIR__ . '/assets/logo.png');
-define('WATERMARK_SCALE', 0.42);
-define('WATERMARK_MARGIN', 0.035);
-define('UPLOADS_PER_MINUTE_PER_IP', 4);
-define('FEED_POLL_SECONDS', 3);
-define('TOAST_SECONDS', 5);
-define('FEATURE_SECONDS', 9);
-define('SESSION_NAME', 'FLASHDROP_SESS');
-define('ADMIN_MAX_ATTEMPTS', 6);
-define('ADMIN_ATTEMPT_WINDOW_MIN', 10);
-CONFIG
-        
-        # Crear carpetas
-        mkdir -p \$DEPLOY_PATH/uploads \$DEPLOY_PATH/video
-        chmod -R 775 \$DEPLOY_PATH/uploads \$DEPLOY_PATH/video
-        chmod 600 config.php
-        
-        # Recargar servicios
-        sudo systemctl reload php8.3-fpm
-        sudo systemctl reload nginx
-        
-        echo "✅ Deploy completado"
-      EOF
+    - ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} "cd /var/www/flashdrop && git pull origin main && mkdir -p uploads video && chmod -R 775 uploads video && sudo systemctl reload php8.3-fpm && sudo systemctl reload nginx"
   only:
     - main
   when: manual
