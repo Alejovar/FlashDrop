@@ -1,18 +1,13 @@
-# .gitlab-ci.yml — Pipeline de deploy automatizado a DigitalOcean Droplet
-
 stages:
   - validate
   - build
   - deploy
 
 variables:
-  DEPLOY_USER: "deploy"              # Usuario en el Droplet (crea con setup-server.sh)
-  DEPLOY_PATH: "/var/www/flashdrop"  # Ruta en el servidor
-  DEPLOY_HOST: "143.244.165.130"     # Tu IP pública de DigitalOcean (o dominio)
+  DEPLOY_USER: "deploy"
+  DEPLOY_PATH: "/var/www/flashdrop"
+  DEPLOY_HOST: "143.244.165.130"
 
-# ============================================================
-# VALIDACIÓN: Lint PHP, verificar config.php existe, etc
-# ============================================================
 validate_php:
   stage: validate
   image: php:8.3-cli
@@ -20,31 +15,13 @@ validate_php:
     - find . -name "*.php" -type f ! -path "./vendor/*" -exec php -l {} \;
   only:
     - FlashDrop
-  allow_failure: false
 
-validate_config:
-  stage: validate
-  script:
-    - test -f config.example.php || (echo "Falta config.example.php" && exit 1)
-    - grep -q "DB_HOST\|DB_NAME\|DB_USER\|MAX_UPLOAD_MB" config.example.php
-  only:
-    - FlashDrop
-
-# ============================================================
-# BUILD: Preparar artefactos (no es necesario compilar,
-# pero verificamos integridad)
-# ============================================================
 build_artifacts:
   stage: build
   image: alpine:latest
   script:
-    # Excluir node_modules, .git, archivos temporales
     - apk add --no-cache zip
-    - zip -rq flashdrop-build.zip . -x
-        "*.git*" "node_modules/*" ".DS_Store" "*.log"
-        "uploads/*" "!uploads/.htaccess"
-        ".gitlab-ci.yml" "scripts/*" "docs/*"
-    - ls -lh flashdrop-build.zip
+    - zip -rq flashdrop-build.zip . -x "*.git*" "node_modules/*" "uploads/*" "!uploads/.htaccess"
   artifacts:
     paths:
       - flashdrop-build.zip
@@ -52,69 +29,15 @@ build_artifacts:
   only:
     - FlashDrop
 
-# ============================================================
-# DEPLOY: SSH al Droplet, descarga código, reinicia servicios
-# ============================================================
 deploy_production:
   stage: deploy
   image: alpine:latest
   script:
-    - apk add --no-cache openssh-client rsync
-    # Crear directorio .ssh si no existe
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    # Agregar clave privada (variable GitLab)
-    - echo "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
-    - chmod 600 ~/.ssh/deploy_key
-    # Agregar el host conocido para evitar prompt interactivo
-    - ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts 2>/dev/null
-    # Ejecutar script de deploy remoto
-    - |
-      ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} << 'REMOTE_SCRIPT'
-        set -e
-        echo "=== Descargando código ==="
-        cd $DEPLOY_PATH
-        git pull origin FlashDrop
-        echo "=== Instalando dependencias (si existen) ==="
-        test -f composer.json && composer install --no-dev --optimize-autoloader || true
-        test -f package.json && npm ci --production || true
-        echo "=== Permisos ==="
-        chmod -R 755 .
-        chmod -R 775 uploads/ video/
-        chmod 600 config.php 2>/dev/null || true
-        echo "=== Limpieza de caché PHP (opcional) ==="
-        sudo systemctl reload php8.3-fpm 2>/dev/null || true
-        sudo systemctl reload nginx 2>/dev/null || true
-        echo "=== Deploy completado a $(date) ==="
-      REMOTE_SCRIPT
-  environment:
-    name: production
-    url: https://143.244.165.130
-    deployment_tier: production
-  only:
-    - FlashDrop
-  when: manual    # Requiere click en la UI (seguridad)
-  allow_failure: false
-
-# Opcional: deploy a staging (develop branch)
-deploy_staging:
-  stage: deploy
-  image: alpine:latest
-  script:
-    - apk add --no-cache openssh-client rsync
+    - apk add --no-cache openssh-client
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - echo "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
     - ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts 2>/dev/null
-    - |
-      ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} << 'REMOTE_SCRIPT'
-        set -e
-        cd /var/www/flashdrop-staging 2>/dev/null || mkdir -p /var/www/flashdrop-staging
-        git clone --quiet https://oauth2:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git . 2>/dev/null || git -C . pull
-        chmod -R 775 uploads/ video/
-        echo "Staging updated"
-      REMOTE_SCRIPT
-  environment:
-    name: staging
+    - ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} "cd $DEPLOY_PATH && git pull origin FlashDrop && chmod -R 775 uploads/ video/ && sudo systemctl reload php8.3-fpm && sudo systemctl reload nginx"
   only:
-    - develop
-  when: on_success
+    - FlashDrop
+  when: manual
