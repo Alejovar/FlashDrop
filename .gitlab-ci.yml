@@ -27,7 +27,7 @@ build_artifacts:
       - flashdrop-build.zip
     expire_in: 1 day
   only:
-    - FlashDrop
+    - main
 
 deploy_production:
   stage: deploy
@@ -39,5 +39,5 @@ deploy_production:
     - ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts 2>/dev/null
     - ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} "cd $DEPLOY_PATH && git pull origin FlashDrop && chmod -R 775 uploads/ video/ && sudo systemctl reload php8.3-fpm && sudo systemctl reload nginx"
   only:
-    - FlashDrop
+    - main
   when: manual
