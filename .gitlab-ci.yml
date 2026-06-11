@@ -18,7 +18,7 @@ deploy_production:
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - echo "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
     - ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts 2>/dev/null
-    - ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} "sudo rm -rf /var/www/flashdrop/.git && cd /var/www/flashdrop && git clone https://oauth2:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git . && mkdir -p uploads video && chmod -R 775 uploads video && sudo systemctl reload php8.3-fpm && sudo systemctl reload nginx"
+    - ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} "sudo rm -rf /var/www/flashdrop && mkdir -p /var/www/flashdrop && cd /var/www/flashdrop && git clone https://oauth2:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git . && mkdir -p uploads video && chmod -R 775 uploads video && sudo chown -R deploy:www-data /var/www/flashdrop && sudo systemctl reload php8.3-fpm && sudo systemctl reload nginx"
   only:
     - main
   when: manual
