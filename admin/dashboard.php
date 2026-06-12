@@ -145,6 +145,54 @@ $fotos = $db->query(
         </div>
     </div>
 
+    <!-- === TEST DE ANIMACIONES === -->
+    <div class="msn-window" style="max-width:500px; margin:0 auto 18px;">
+        <div class="msn-titlebar">
+            <span class="titulo">Test de animaciones &mdash; pantalla.php</span>
+            <span class="controles"><span>_</span><span>□</span><span>X</span></span>
+        </div>
+        <div class="msn-cuerpo">
+            <p class="aviso" style="margin-bottom:14px;">
+                Dispara animaciones en la pantalla grande en tiempo real.<br>
+                Requiere que <strong>pantalla.php</strong> esté abierta y activa.
+            </p>
+            <p class="mensaje" id="msg-test"></p>
+
+            <div class="menu-opciones" style="gap:10px;">
+                <!-- Toast MSN -->
+                <button class="btn secundario" id="btn-test-toast" type="button">
+                    PROBAR VENTANA MSN (TOAST)
+                </button>
+
+                <!-- Milestone con selector de cantidad -->
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <button class="btn secundario" id="btn-test-milestone" type="button" style="flex:1;">
+                        PROBAR LOGRO
+                    </button>
+                    <select id="sel-milestone-qty" style="
+                        background:var(--negro-panel);
+                        color:var(--texto);
+                        border:1px solid rgba(140,160,230,.4);
+                        border-radius:8px;
+                        padding:10px 10px;
+                        font-family:inherit;
+                        font-size:13px;
+                        cursor:pointer;
+                        min-width:90px;
+                    ">
+                        <option value="15">15</option>
+                        <option value="30">30</option>
+                        <option value="45">45</option>
+                        <option value="60">60</option>
+                        <option value="75">75</option>
+                        <option value="90">90</option>
+                        <option value="105">105</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- === ACCIONES GLOBALES === -->
     <div class="menu-opciones" style="max-width:500px; margin:0 auto 30px;">
         <a class="btn" href="../api/album.php" download="AlejoFest_Vol21.zip">DESCARGAR ALBUM COMPLETO</a>

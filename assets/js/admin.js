@@ -1,5 +1,4 @@
-// admin.js v2 — ocultar, restaurar, eliminar, reproducir en pantalla.
-// También actualiza estadísticas en tiempo real.
+// admin.js v2
 (function () {
     'use strict';
 
@@ -25,6 +24,7 @@
         return res.json();
     }
 
+    // --- Moderación por foto ---
     document.querySelectorAll('.admin-card').forEach(card => {
         const id        = card.dataset.id;
         const btnToggle = card.querySelector('.btn-toggle');
@@ -32,7 +32,6 @@
         const btnDelete = card.querySelector('.btn-delete');
         const estado    = card.querySelector('.estado');
 
-        // Ocultar / Restaurar
         btnToggle.addEventListener('click', async () => {
             const ocultar = !card.classList.contains('oculta');
             btnToggle.disabled = true;
@@ -53,7 +52,6 @@
             }
         });
 
-        // Reproducir en pantalla
         btnReplay.addEventListener('click', async () => {
             btnReplay.disabled = true;
             try {
@@ -67,7 +65,6 @@
             }
         });
 
-        // Eliminar permanentemente
         if (btnDelete) {
             btnDelete.addEventListener('click', async () => {
                 if (!confirm('Eliminar permanentemente esta foto? Esta accion no se puede deshacer.')) return;
@@ -89,13 +86,13 @@
         }
     });
 
-    // --- Actualizar estadísticas en tiempo real ---
+    // --- Stats en tiempo real ---
     async function actualizarStats() {
         try {
             const res  = await fetch('../api/stats.php', { cache: 'no-store' });
             const data = await res.json();
             if (!data.ok) return;
-            const el = (id) => document.getElementById(id);
+            const el = id => document.getElementById(id);
             if (el('stat-total'))    el('stat-total').textContent    = data.total;
             if (el('stat-online'))   el('stat-online').textContent   = data.online;
             if (el('stat-lasthour')) el('stat-lasthour').textContent = data.lastHour;
@@ -104,4 +101,55 @@
     }
     actualizarStats();
     setInterval(actualizarStats, 10000);
+
+    // --- Test de animaciones ---
+    const msgTest          = document.getElementById('msg-test');
+    const btnTestToast     = document.getElementById('btn-test-toast');
+    const btnTestMilestone = document.getElementById('btn-test-milestone');
+    const selQty           = document.getElementById('sel-milestone-qty');
+
+    function avisoTest(texto, ok) {
+        if (!msgTest) return;
+        msgTest.textContent = texto;
+        msgTest.className   = 'mensaje ' + (ok ? 'ok' : 'error');
+        clearTimeout(avisoTest._t);
+        avisoTest._t = setTimeout(() => { msgTest.textContent = ''; }, 4000);
+    }
+
+    async function dispararTest(type, quantity) {
+        const fd = new FormData();
+        fd.append('type',     type);
+        fd.append('quantity', quantity || 15);
+        try {
+            const res  = await fetch('../api/test_event.php', {
+                method:  'POST',
+                body:    fd,
+                headers: { 'X-CSRF-Token': csrf },
+            });
+            const data = await res.json();
+            if (data.ok) {
+                avisoTest('Evento enviado. Aparece en pantalla.php en ~3 segundos.', true);
+            } else {
+                avisoTest(data.error || 'Error al disparar el evento.', false);
+            }
+        } catch (e) {
+            avisoTest('Sin conexion con el servidor.', false);
+        }
+    }
+
+    if (btnTestToast) {
+        btnTestToast.addEventListener('click', () => {
+            btnTestToast.disabled = true;
+            dispararTest('toast').finally(() => { btnTestToast.disabled = false; });
+        });
+    }
+
+    if (btnTestMilestone) {
+        btnTestMilestone.addEventListener('click', () => {
+            const qty = selQty ? parseInt(selQty.value, 10) : 15;
+            btnTestMilestone.disabled = true;
+            dispararTest('milestone', qty).finally(() => { btnTestMilestone.disabled = false; });
+        });
+    }
+
 })();

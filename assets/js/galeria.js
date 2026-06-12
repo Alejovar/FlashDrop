@@ -1,8 +1,8 @@
-// galeria.js v2 — carga paginada + polling en tiempo real + lightbox con Polaroid.
+// galeria.js v2
 (function () {
     'use strict';
 
-    const POLL_MS  = 5000;  // actualizar galería cada 5 s
+    const POLL_MS  = 5000;
 
     const galeria  = document.getElementById('galeria');
     const btnMas   = document.getElementById('btn-mas');
@@ -15,7 +15,8 @@
     let menorId  = 0;
     let mayorId  = 0;
     let total    = 0;
-    const loaded = new Set();  // IDs ya mostradas
+    const loaded = new Set();
+    let fotoActual = null;  // { id, url, orientation }
 
     function agregarFoto(p, alFinal) {
         if (loaded.has(p.id)) return;
@@ -34,9 +35,8 @@
         img.addEventListener('click', () => abrirLightbox(p));
 
         wrap.appendChild(img);
-
         if (alFinal) galeria.appendChild(wrap);
-        else galeria.prepend(wrap);
+        else         galeria.prepend(wrap);
 
         if (menorId === 0 || p.id < menorId) menorId = p.id;
         if (p.id > mayorId) mayorId = p.id;
@@ -45,14 +45,74 @@
     }
 
     function abrirLightbox(p) {
+        fotoActual = p;
         lbImg.src  = p.url;
-        // Descarga como Polaroid, sin exponer la URL del original
-        lbDl.href  = 'api/polaroid.php?id=' + p.id;
-        lbDl.setAttribute('download', 'AlejoFest_Vol21_' + p.id + '_recuerdo.jpg');
         lightbox.classList.add('abierto');
     }
 
-    // Carga inicial (paginada hacia atrás)
+    // ---------- Descarga compatible con Safari / iPhone ----------
+    // Safari ignora el atributo download en links. La única forma fiable
+    // es hacer fetch del binario, crear un blob URL y abrirlo.
+    lbDl.addEventListener('click', async function (e) {
+        e.preventDefault();
+        if (!fotoActual) return;
+
+        const btn = lbDl;
+        const textoOriginal = btn.textContent;
+        btn.textContent  = 'DESCARGANDO...';
+        btn.style.opacity = '0.6';
+        btn.style.pointerEvents = 'none';
+
+        try {
+            const res = await fetch('api/polaroid.php?id=' + fotoActual.id);
+            if (!res.ok) throw new Error('Error HTTP ' + res.status);
+            const blob = await res.blob();
+            const url  = URL.createObjectURL(blob);
+
+            // En iOS/Safari la única forma de descargar es abrir en nueva pestaña
+            // (el usuario hace "Guardar imagen" desde ahí).
+            // En Chrome/Firefox el link con download funciona directo.
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+                          || /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+            if (isSafari) {
+                // Abrir el blob en nueva pestaña — iOS permite "Guardar en fotos" desde ahí
+                window.open(url, '_blank');
+            } else {
+                const a = document.createElement('a');
+                a.href     = url;
+                a.download = 'AlejoFest_Vol21_recuerdo.jpg';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+
+            setTimeout(() => URL.revokeObjectURL(url), 10000);
+        } catch (err) {
+            alert('No se pudo descargar la foto. Intenta mantener presionada la imagen y "Guardar".');
+        } finally {
+            btn.textContent  = textoOriginal;
+            btn.style.opacity = '';
+            btn.style.pointerEvents = '';
+        }
+    });
+
+    // Cerrar lightbox
+    lightbox.addEventListener('click', e => {
+        if (e.target === lightbox || e.target === lbImg) {
+            lightbox.classList.remove('abierto');
+            lbImg.src  = '';
+            fotoActual = null;
+        }
+    });
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            lightbox.classList.remove('abierto');
+            fotoActual = null;
+        }
+    });
+
+    // ---------- Carga paginada ----------
     async function cargar(before) {
         const url  = 'api/photos.php' + (before ? ('?before=' + before) : '');
         const res  = await fetch(url);
@@ -63,27 +123,18 @@
         if (!data.hasMore && total === 0) vacio.hidden = false;
     }
 
-    // Polling — solo fotos nuevas (mayor ID que el máximo conocido)
+    // ---------- Polling en tiempo real ----------
     async function pollNuevas() {
         if (mayorId === 0) return;
-        const res  = await fetch('api/photos.php?after=' + mayorId);
-        const data = await res.json();
-        if (!data.ok || !data.photos) return;
-        // Las fotos nuevas van arriba (prepend)
-        [...data.photos].reverse().forEach(p => agregarFoto(p, false));
+        try {
+            const res  = await fetch('api/photos.php?after=' + mayorId);
+            const data = await res.json();
+            if (!data.ok || !data.photos) return;
+            [...data.photos].reverse().forEach(p => agregarFoto(p, false));
+        } catch (e) {}
     }
 
     btnMas.addEventListener('click', () => cargar(menorId));
-
-    lightbox.addEventListener('click', e => {
-        if (e.target === lightbox || e.target === lbImg) {
-            lightbox.classList.remove('abierto');
-            lbImg.src = '';
-        }
-    });
-    document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') lightbox.classList.remove('abierto');
-    });
 
     cargar(0).then(() => {
         setInterval(pollNuevas, POLL_MS);

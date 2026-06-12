@@ -78,3 +78,16 @@ CREATE TABLE IF NOT EXISTS milestones (
 -- El usuario admin se crea con:
 --   php tools/crear_admin.php usuario contraseña_fuerte
 -- ============================================================
+
+-- ============================================================
+-- Eventos de prueba para el admin (dispara animaciones en pantalla.php)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS test_events (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    type ENUM('toast','milestone') NOT NULL,
+    photo_id INT UNSIGNED,          -- NULL = usar foto aleatoria
+    quantity INT UNSIGNED,          -- solo para type=milestone
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_created (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
