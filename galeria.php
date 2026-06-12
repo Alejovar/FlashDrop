@@ -36,8 +36,9 @@ af_security_headers();
 <!-- Lightbox — solo muestra la foto, no el link directo al original -->
 <div class="lightbox" id="lightbox" role="dialog" aria-label="Foto ampliada">
     <div class="lightbox-acciones">
-        <a class="btn mini" id="lb-download-polaroid" href="#" download>DESCARGAR RECUERDO</a>
+        <a class="btn mini" id="lb-download-polaroid" href="#">DESCARGAR RECUERDO</a>
     </div>
+    <p class="lightbox-hint" id="lb-hint" hidden>Mantén presionada la imagen y elige "Guardar en Fotos"</p>
     <img id="lightbox-img" src="" alt="Foto ampliada">
 </div>
 

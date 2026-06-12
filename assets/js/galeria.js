@@ -50,50 +50,69 @@
         lightbox.classList.add('abierto');
     }
 
-    // ---------- Descarga compatible con Safari / iPhone ----------
-    // Safari ignora el atributo download en links. La única forma fiable
-    // es hacer fetch del binario, crear un blob URL y abrirlo.
+    // ---------- Descarga — compatible con Safari/iPhone ----------
+    // iOS no permite descargas de blobs. Solución: mostrar la Polaroid
+    // directamente en el lightbox para que el usuario la mantenga presionada.
+    const lbHint = document.getElementById('lb-hint');
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    // En iOS cambiar el texto del botón desde el inicio
+    if (isIOS) {
+        lbDl.textContent = 'VER POLAROID';
+    }
+
     lbDl.addEventListener('click', async function (e) {
         e.preventDefault();
         if (!fotoActual) return;
 
-        const btn = lbDl;
-        const textoOriginal = btn.textContent;
-        btn.textContent  = 'DESCARGANDO...';
-        btn.style.opacity = '0.6';
-        btn.style.pointerEvents = 'none';
+        const textoOriginal = lbDl.textContent;
+        lbDl.textContent = 'GENERANDO...';
+        lbDl.style.opacity = '0.6';
+        lbDl.style.pointerEvents = 'none';
+        if (lbHint) lbHint.hidden = true;
 
         try {
             const res = await fetch('api/polaroid.php?id=' + fotoActual.id);
-            if (!res.ok) throw new Error('Error HTTP ' + res.status);
+            if (!res.ok) throw new Error('HTTP ' + res.status);
             const blob = await res.blob();
             const url  = URL.createObjectURL(blob);
 
-            // En iOS/Safari la única forma de descargar es abrir en nueva pestaña
-            // (el usuario hace "Guardar imagen" desde ahí).
-            // En Chrome/Firefox el link con download funciona directo.
-            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
-                          || /iPad|iPhone|iPod/.test(navigator.userAgent);
-
-            if (isSafari) {
-                // Abrir el blob en nueva pestaña — iOS permite "Guardar en fotos" desde ahí
-                window.open(url, '_blank');
+            if (isIOS) {
+                // Mostrar la Polaroid dentro del lightbox
+                // El usuario la mantiene presionada → "Guardar en Fotos"
+                lbImg.src = url;
+                lbDl.textContent = 'MANTÉN PRESIONADA PARA GUARDAR';
+                lbDl.style.opacity = '';
+                lbDl.style.pointerEvents = '';
+                if (lbHint) {
+                    lbHint.hidden = false;
+                    lbHint.textContent = 'Mantén presionada la imagen de arriba y elige "Guardar en Fotos"';
+                }
+                setTimeout(() => URL.revokeObjectURL(url), 30000);
+                return; // no restaurar botón — el hint guía al usuario
             } else {
+                // Chrome / Android / desktop — descarga directa
                 const a = document.createElement('a');
-                a.href     = url;
+                a.href = url;
                 a.download = 'AlejoFest_Vol21_recuerdo.jpg';
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 10000);
             }
-
-            setTimeout(() => URL.revokeObjectURL(url), 10000);
         } catch (err) {
-            alert('No se pudo descargar la foto. Intenta mantener presionada la imagen y "Guardar".');
+            if (lbHint) {
+                lbHint.hidden = false;
+                lbHint.textContent = 'No se pudo generar. Mantén presionada la foto y elige "Guardar en Fotos".';
+            }
         } finally {
-            btn.textContent  = textoOriginal;
-            btn.style.opacity = '';
-            btn.style.pointerEvents = '';
+            if (!isIOS) {
+                lbDl.textContent = textoOriginal;
+                lbDl.style.opacity = '';
+                lbDl.style.pointerEvents = '';
+            }
         }
     });
 

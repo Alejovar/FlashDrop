@@ -1,285 +1,258 @@
-/* pantalla.css v2 — overlays sobre el video. El video NUNCA se detiene. */
+/* pantalla.css v4 — animaciones de logro estilo show/videojuego */
 
-.pantalla-body {
-    overflow: hidden;
-    background: #000;
-    font-family: 'Courier New', Courier, monospace;
-}
+.pantalla-body { overflow:hidden; background:#000; margin:0; padding:0; font-family:'Tahoma','Verdana',sans-serif; }
 
-/* ============================================================
-   VIDEO
-   ============================================================ */
-.visual-loop {
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
-    z-index: 1;
-}
+/* ============================================================ VIDEO */
+.visual-loop { position:fixed; inset:0; width:100vw; height:100vh; object-fit:cover; z-index:1; }
 
-/* ============================================================
-   LOGO
-   ============================================================ */
+/* ============================================================ LOGO */
 .logo-pantalla {
-    position: fixed;
-    top: 22px;
-    left: 26px;
-    width: clamp(140px, 14vw, 260px);
-    z-index: 10;
-    filter: drop-shadow(0 0 20px rgba(31, 86, 255, .8));
+    position:fixed; top:22px; left:26px;
+    width:clamp(120px,12vw,220px); z-index:10;
+    filter:drop-shadow(0 0 18px rgba(31,86,255,.85));
+    pointer-events:none;
 }
 
-/* ============================================================
-   HUD — esquina superior derecha, siempre visible
-   ============================================================ */
+/* ============================================================ HUD */
 .hud {
-    position: fixed;
-    top: 22px;
-    right: 26px;
-    z-index: 20;
-    background: rgba(4, 5, 13, .72);
-    border: 1px solid rgba(111, 179, 255, .4);
-    border-radius: 6px;
-    padding: 10px 16px;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 0 18px rgba(31, 86, 255, .3), inset 0 1px 0 rgba(255,255,255,.06);
-    min-width: 140px;
+    position:fixed; top:22px; right:26px; z-index:20;
+    background:rgba(4,5,13,.78); border:1px solid rgba(111,179,255,.4);
+    border-radius:6px; padding:10px 18px; backdrop-filter:blur(10px);
+    box-shadow:0 0 20px rgba(31,86,255,.3),inset 0 1px 0 rgba(255,255,255,.06);
+    min-width:148px;
 }
-
-.hud-sep {
-    color: rgba(111, 179, 255, .5);
-    font-size: 10px;
-    letter-spacing: 1px;
-    text-align: center;
-    margin: 2px 0;
-}
-
-.hud-row {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    padding: 4px 0;
-}
-
-.hud-num {
-    font-size: 22px;
-    font-weight: 900;
-    color: #fff;
-    letter-spacing: 1px;
-    text-shadow: 0 0 12px rgba(111, 179, 255, .7);
-    min-width: 42px;
-    text-align: right;
-}
-
-.hud-label {
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: rgba(111, 179, 255, .8);
-    text-transform: uppercase;
-}
-
-.hud-live {
-    align-items: center;
-    gap: 8px;
-}
-
-.hud-dot {
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    background: #ff2a2a;
-    border-radius: 50%;
-    box-shadow: 0 0 8px #ff2a2a;
-    animation: pulso-live 1.2s ease-in-out infinite;
-    flex-shrink: 0;
-    margin-left: 42px;
-}
-
+.hud-sep  { color:rgba(111,179,255,.45); font-size:10px; letter-spacing:1px; text-align:center; margin:2px 0; font-family:'Courier New',monospace; }
+.hud-row  { display:flex; align-items:baseline; gap:10px; padding:4px 0; }
+.hud-num  { font-size:24px; font-weight:900; color:#fff; letter-spacing:1px; text-shadow:0 0 14px rgba(111,179,255,.8); min-width:46px; text-align:right; font-family:'Courier New',monospace; }
+.hud-label{ font-size:10px; letter-spacing:2.5px; color:rgba(111,179,255,.85); text-transform:uppercase; font-family:'Courier New',monospace; }
+.hud-live { align-items:center; gap:10px; }
+.hud-dot  { display:inline-block; width:8px; height:8px; background:#ff3030; border-radius:50%; box-shadow:0 0 10px #ff3030; animation:pulso-live 1.2s ease-in-out infinite; flex-shrink:0; margin-left:46px; }
 @keyframes pulso-live {
-    0%, 100% { opacity: 1; box-shadow: 0 0 8px #ff2a2a; }
-    50%       { opacity: .4; box-shadow: 0 0 3px #ff2a2a; }
+    0%,100%{ opacity:1; box-shadow:0 0 10px #ff3030; }
+    50%    { opacity:.35; box-shadow:0 0 3px #ff3030; }
 }
+
+/* ============================================================ VENTANA MSN */
+.msn-window-notif {
+    position:fixed; bottom:28px; right:28px; z-index:40;
+    border:2px solid #0a246a; border-radius:8px 8px 4px 4px; overflow:hidden;
+    box-shadow:0 0 0 1px #7a9ae8, 0 8px 40px rgba(0,0,0,.75), 0 0 60px rgba(31,86,255,.35);
+    transform:translate(120%,120%); opacity:0;
+    transition:transform .55s cubic-bezier(.15,.9,.3,1.05), opacity .4s ease;
+}
+.msn-window-notif.visible  { transform:translate(0,0); opacity:1; animation:msn-glow 2.5s ease-in-out infinite; }
+.msn-window-notif.saliendo { transform:translate(120%,120%); opacity:0; transition:transform .45s cubic-bezier(.7,0,.9,.5), opacity .35s ease; }
+.msn-window-notif.vertical   { width:clamp(220px,22vw,340px); }
+.msn-window-notif.horizontal { width:clamp(340px,36vw,560px); }
+.msn-window-notif.cuadrada   { width:clamp(260px,28vw,400px); }
+
+@keyframes msn-glow {
+    0%,100%{ box-shadow:0 0 0 1px #7a9ae8,0 8px 40px rgba(0,0,0,.75),0 0 60px rgba(31,86,255,.35); }
+    50%    { box-shadow:0 0 0 1px #7a9ae8,0 8px 40px rgba(0,0,0,.75),0 0 90px rgba(31,86,255,.7); }
+}
+
+.msn-win-titlebar { display:flex; align-items:center; justify-content:space-between; padding:5px 8px 5px 10px; background:linear-gradient(180deg,#2a5bd7 0%,#1a47c2 45%,#1a3db0 46%,#1e44be 100%); user-select:none; }
+.msn-win-titlebar-left { display:flex; align-items:center; gap:7px; }
+.msn-win-icon  { font-size:10px; color:#7af; line-height:1; }
+.msn-win-title { font-family:'Tahoma',sans-serif; font-size:12px; font-weight:bold; color:#fff; text-shadow:1px 1px 2px rgba(0,0,0,.5); letter-spacing:.3px; white-space:nowrap; }
+.msn-win-controls { display:flex; gap:3px; align-items:center; }
+.msn-win-controls span { display:inline-flex; align-items:center; justify-content:center; width:18px; height:16px; font-size:11px; font-weight:bold; border-radius:3px; border:1px solid rgba(255,255,255,.3); color:#fff; cursor:default; line-height:1; }
+.msn-btn-min,.msn-btn-max { background:linear-gradient(180deg,#5a8ee8 0%,#3a6ed0 100%); }
+.msn-btn-close { background:linear-gradient(180deg,#e85050 0%,#c83030 100%); border-color:rgba(255,255,255,.4); }
+.msn-win-body  { background:#0b0e1e; display:flex; flex-direction:column; }
+#msn-foto { width:100%; display:block; object-fit:cover; }
+.msn-window-notif.vertical   #msn-foto { aspect-ratio:3/4; }
+.msn-window-notif.horizontal #msn-foto { aspect-ratio:4/3; }
+.msn-window-notif.cuadrada   #msn-foto { aspect-ratio:1/1; }
+.msn-win-footer { padding:8px 12px; background:linear-gradient(180deg,#0d1225,#080b18); border-top:1px solid rgba(111,179,255,.2); text-align:center; }
+.msn-win-label  { font-family:'Courier New',monospace; font-size:10px; letter-spacing:2.5px; color:rgba(111,179,255,.7); text-transform:uppercase; }
 
 /* ============================================================
-   TOAST MSN — nueva foto
-   ============================================================ */
-.msn-toast {
-    position: fixed;
-    right: 24px;
-    bottom: 24px;
-    width: 320px;
-    z-index: 30;
-    border-radius: 10px;
-    overflow: hidden;
-    background: linear-gradient(180deg, #11162e, #0b0e1e);
-    border: 1px solid rgba(140, 160, 230, .6);
-    box-shadow:
-        0 0 30px rgba(31, 86, 255, .55),
-        0 0 0 1px rgba(0,0,0,.7),
-        inset 0 1px 0 rgba(255,255,255,.08);
-    transform: translateY(150%);
-    transition: transform .5s cubic-bezier(.2, .9, .3, 1.08);
-}
-
-.msn-toast.visible {
-    transform: translateY(0);
-}
-
-/* Adaptar tamaño imagen según orientación */
-.msn-toast.vertical .toast-img-wrap img {
-    width: 74px;
-    height: 100px;
-    object-fit: cover;
-}
-.msn-toast.horizontal .toast-img-wrap img {
-    width: 120px;
-    height: 74px;
-    object-fit: cover;
-}
-
-.toast-cuerpo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-}
-
-#toast-img {
-    width: 74px;
-    height: 74px;
-    object-fit: cover;
-    border-radius: 6px;
-    border: 1px solid rgba(140, 160, 230, .5);
-    box-shadow: 0 0 10px rgba(31, 86, 255, .3);
-    flex-shrink: 0;
-}
-
-/* Orientación vertical/horizontal de la imagen en el toast */
-.msn-toast.vertical   #toast-img { width: 60px;  height: 88px; }
-.msn-toast.horizontal #toast-img { width: 110px; height: 68px; }
-
-.toast-texto {
-    font-size: 12px;
-    color: #e8ecff;
-    line-height: 1.5;
-    letter-spacing: .5px;
-    text-transform: uppercase;
-    font-family: Tahoma, Verdana, sans-serif;
-}
-
-/* ============================================================
-   LOGRO / MILESTONE OVERLAY
+   OVERLAY DE LOGRO — estilo show/videojuego
    ============================================================ */
 .logro-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 50;
-    background: rgba(2, 3, 12, 0);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background .7s ease;
+    position:fixed; inset:0; z-index:50;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(2,3,12,0);
+    transition:background .6s ease;
+    --logro-overlay-bg: rgba(2,3,12,.82);
+}
+.logro-overlay.visible  { background:var(--logro-overlay-bg); }
+.logro-overlay.saliendo { background:rgba(2,3,12,0); transition:background .8s ease; }
+
+/* Canvas partículas */
+.logro-canvas { position:fixed; inset:0; z-index:51; pointer-events:none; }
+
+/* Estrellas flotantes */
+.logro-estrellas { position:fixed; inset:0; z-index:52; pointer-events:none; overflow:hidden; }
+.estrella {
+    position:absolute;
+    width:6px; height:6px;
+    background:#fff;
+    clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+    opacity:0;
 }
 
-.logro-overlay.visible {
-    background: rgba(2, 3, 12, .65);
-}
-
-.logro-overlay.saliendo {
-    background: rgba(2, 3, 12, 0);
-    transition: background .7s ease;
-}
-
+/* Contenido principal del logro */
 .logro-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 28px;
-    position: relative;
-    z-index: 2;
+    position:relative; z-index:53;
+    display:flex; flex-direction:column; align-items:center;
+    gap:clamp(8px,1.4vh,18px);
+    padding:0 40px;
+    max-width:min(90vw, 900px);
 }
 
-/* Foto protagonista del logro */
+/* --- Etiqueta superior "LOGRO LEGENDARIO" --- */
+.logro-badge {
+    display:flex; align-items:center; gap:12px;
+    opacity:0; transform:translateY(-30px);
+    transition:opacity .5s ease, transform .5s ease;
+}
+.logro-badge.visible { opacity:1; transform:translateY(0); }
+.logro-badge-text {
+    font-family:'Courier New',monospace;
+    font-size:clamp(11px,1.5vw,18px);
+    font-weight:900; letter-spacing:5px;
+    color:#b0c4ff; text-transform:uppercase;
+    text-shadow:0 0 12px rgba(111,179,255,.8);
+    white-space:nowrap;
+}
+.logro-badge-line {
+    height:1px; width:clamp(40px,5vw,80px);
+    background:linear-gradient(90deg,transparent,#6699ff,transparent);
+}
+
+/* --- Número/título grande "100 MEMORIES" --- */
+.logro-titulo {
+    font-family:'Arial Black','Impact',sans-serif;
+    font-size:clamp(52px,10vw,130px);
+    font-weight:900; letter-spacing:4px;
+    text-transform:uppercase; text-align:center; line-height:1;
+    color:#fff;
+    opacity:0; transform:scale(.5);
+    transition:opacity .5s ease, transform .6s cubic-bezier(.15,.9,.25,1.3);
+
+    /* Efecto cromado/neón como la imagen */
+    background:linear-gradient(180deg,
+        #ffffff  0%,
+        #c8d8ff 20%,
+        #7eb3ff 40%,
+        #3366ff 55%,
+        #1144dd 65%,
+        #88aaff 80%,
+        #ffffff 100%
+    );
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 0 18px rgba(100,160,255,.9)) drop-shadow(0 0 45px rgba(31,86,255,.7));
+}
+.logro-titulo.visible { opacity:1; transform:scale(1); }
+
+/* Pulso del título — el filter base lo aplica JS según el tema */
+@keyframes titulo-pulso {
+    0%,100%{ opacity:1; }
+    50%    { opacity:.85; }
+}
+.logro-titulo.visible { animation:titulo-pulso 1.8s ease-in-out infinite; animation-delay:.6s; }
+
+/* --- Marco de la foto --- */
+.logro-foto-wrap {
+    position:relative;
+    opacity:0; transform:scale(.7) translateY(20px);
+    transition:opacity .7s ease, transform .7s cubic-bezier(.15,.9,.25,1.15);
+}
+.logro-foto-wrap.visible { opacity:1; transform:scale(1) translateY(0); }
+
+/* Brillo giratorio detrás de la foto */
+.logro-marco-brillo {
+    position:absolute; inset:-8px;
+    border-radius:16px; z-index:-1;
+    background:conic-gradient(
+        from 0deg,
+        #ff00ff, #0066ff, #00ffff, #ffff00, #ff0099, #0066ff, #ff00ff
+    );
+    animation:marco-girar 3s linear infinite;
+    filter:blur(6px);
+}
+@keyframes marco-girar { to { transform:rotate(360deg); } }
+
+/* Foto dentro del marco */
 .logro-foto {
-    border-radius: 12px;
-    border: 2px solid rgba(111, 179, 255, .7);
-    box-shadow:
-        0 0 60px rgba(31, 86, 255, .8),
-        0 0 120px rgba(31, 86, 255, .4),
-        0 0 0 1px rgba(255,255,255,.1);
-    opacity: 0;
-    transform: scale(.7);
-    transition: opacity .8s ease, transform .8s cubic-bezier(.2, .9, .3, 1.15);
+    display:block; border-radius:10px; position:relative; z-index:1;
+    border:3px solid rgba(255,255,255,.9);
+    box-shadow:0 0 0 1px rgba(200,220,255,.3), 0 0 40px rgba(31,86,255,.6);
+}
+.logro-foto.vertical   { height:min(40vh,480px); width:auto; }
+.logro-foto.horizontal { width:min(44vw,660px);  height:auto; }
+.logro-foto.cuadrada   { width:min(34vw,480px);  height:auto; }
+
+/* Esquinas decorativas del marco */
+.logro-marco-esquinas { position:absolute; inset:0; pointer-events:none; }
+.esq {
+    position:absolute; width:20px; height:20px;
+    border-color:#7eb3ff; border-style:solid;
+    animation:esq-brillo 1.5s ease-in-out infinite alternate;
+}
+@keyframes esq-brillo {
+    from { border-color:#7eb3ff; box-shadow:0 0 8px #7eb3ff; }
+    to   { border-color:#fff;    box-shadow:0 0 18px #fff, 0 0 35px #7eb3ff; }
+}
+.esq.tl { top:-3px;    left:-3px;  border-width:3px 0 0 3px; }
+.esq.tr { top:-3px;    right:-3px; border-width:3px 3px 0 0; }
+.esq.bl { bottom:-3px; left:-3px;  border-width:0 0 3px 3px; }
+.esq.br { bottom:-3px; right:-3px; border-width:0 3px 3px 0; }
+
+/* Zoom suave continuo de la foto */
+@keyframes foto-zoom {
+    0%,100%{ transform:scale(1); }
+    50%    { transform:scale(1.025); }
+}
+.logro-foto-wrap.visible .logro-foto { animation:foto-zoom 5s ease-in-out infinite; animation-delay:.7s; }
+
+/* --- Subtítulo "LA FIESTA ESTÁ EN SU MEJOR MOMENTO" --- */
+.logro-sub {
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    opacity:0; transform:translateY(16px);
+    transition:opacity .5s ease, transform .5s ease;
+}
+.logro-sub.visible { opacity:1; transform:translateY(0); }
+.logro-sub-top {
+    font-family:'Courier New',monospace;
+    font-size:clamp(11px,1.6vw,20px); font-weight:700;
+    letter-spacing:3px; color:#e0eaff; text-transform:uppercase;
+    text-shadow:0 0 14px rgba(111,179,255,.7);
+}
+.logro-sub-bot {
+    font-family:'Courier New',monospace;
+    font-size:clamp(9px,1.1vw,14px); letter-spacing:5px;
+    color:rgba(111,179,255,.7); text-transform:uppercase;
 }
 
-.logro-overlay.visible .logro-foto {
-    opacity: 1;
-    transform: scale(1);
+/* --- Etiqueta inferior "RECORD ALCANZADO" --- */
+.logro-record {
+    display:flex; align-items:center; gap:12px;
+    opacity:0; transform:translateY(20px);
+    transition:opacity .5s ease, transform .5s ease;
+}
+.logro-record.visible { opacity:1; transform:translateY(0); }
+.logro-record-text {
+    font-family:'Courier New',monospace;
+    font-size:clamp(10px,1.3vw,16px); font-weight:900;
+    letter-spacing:5px; color:#ffcc44; text-transform:uppercase;
+    text-shadow:0 0 14px rgba(255,200,60,.9), 0 0 35px rgba(255,160,0,.6);
+    animation:record-pulso 1.4s ease-in-out infinite;
+    white-space:nowrap;
+}
+@keyframes record-pulso {
+    0%,100%{ text-shadow:0 0 14px rgba(255,200,60,.9),0 0 35px rgba(255,160,0,.6); }
+    50%    { text-shadow:0 0 25px rgba(255,220,80,1), 0 0 60px rgba(255,180,0,.9); }
+}
+.logro-record-line {
+    height:1px; width:clamp(40px,5vw,80px);
+    background:linear-gradient(90deg,transparent,#ffcc44,transparent);
 }
 
-.logro-foto.vertical   { height: min(55vh, 680px); width: auto; }
-.logro-foto.horizontal { width: min(50vw, 800px);  height: auto; }
-.logro-foto.cuadrada   { width: min(40vw, 600px);  height: auto; }
-
-/* Texto del logro: "N MEMORIES" */
-.logro-texto {
-    font-family: 'Courier New', Courier, monospace;
-    font-size: clamp(28px, 6vw, 72px);
-    font-weight: 900;
-    letter-spacing: 6px;
-    text-transform: uppercase;
-    color: #fff;
-    text-align: center;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity .6s ease, transform .6s ease;
-    text-shadow:
-        0 0 20px rgba(111, 179, 255, 1),
-        0 0 60px rgba(31, 86, 255, .8),
-        0 0 100px rgba(31, 86, 255, .4);
-    position: relative;
-}
-
-.logro-texto::before,
-.logro-texto::after {
-    content: '━━━━━━━━━━━━━━━━━';
-    display: block;
-    font-size: 12px;
-    letter-spacing: 2px;
-    color: rgba(111, 179, 255, .6);
-    margin: 8px 0;
-    text-shadow: none;
-}
-
-.logro-texto.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Canvas de partículas — cubre toda la pantalla, z sobre el overlay oscuro pero bajo el inner */
-.logro-canvas {
-    position: fixed;
-    inset: 0;
-    z-index: 51;
-    pointer-events: none;
-}
-
-/* ============================================================
-   OVERLAY DE INICIO
-   ============================================================ */
-.overlay-inicio {
-    position: fixed;
-    inset: 0;
-    z-index: 60;
-    background: #04050d;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 32px;
-}
-
-.overlay-inicio img { width: min(60%, 480px); }
-.overlay-inicio .btn { width: auto; padding: 16px 52px; font-size: 16px; letter-spacing: 2px; }
-.overlay-inicio.oculto { display: none; }
+/* ============================================================ INICIO */
+.overlay-inicio { position:fixed; inset:0; z-index:60; background:#04050d; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:36px; }
+.overlay-inicio img { width:min(55%,460px); }
+.overlay-inicio .btn { width:auto; padding:16px 56px; font-size:16px; letter-spacing:2px; }
+.overlay-inicio.oculto { display:none; }

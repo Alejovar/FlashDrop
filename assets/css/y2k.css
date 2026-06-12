@@ -393,3 +393,19 @@ body {
 .stat-lbl { font-size: 10px; color: var(--texto-suave); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px; }
 .stat-sub { font-size: 11px; color: var(--azul-cielo); margin-top: 2px; word-break: break-all; }
 .online-dot { display: inline-block; width: 7px; height: 7px; background: var(--ok); border-radius: 50%; margin-right: 4px; box-shadow: 0 0 6px var(--ok); }
+
+/* Hint de guardado en iOS dentro del lightbox */
+.lightbox-hint {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: rgba(111, 179, 255, .85);
+    text-align: center;
+    padding: 8px 16px;
+    background: rgba(0,0,0,.4);
+    border: 1px solid rgba(111,179,255,.25);
+    border-radius: 6px;
+    max-width: 300px;
+    line-height: 1.5;
+    z-index: 61;
+}
