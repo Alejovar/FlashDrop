@@ -1,9 +1,9 @@
-// subir.js — flujo: elegir → confirmar → subir → resultado con marca de agua.
+// subir.js v2 — SOLO cámara del dispositivo. Sin galería.
 (function () {
     'use strict';
 
-    const csrf = document.querySelector('meta[name="csrf"]').content;
-    const MAX_MB = 12;
+    const csrf     = document.querySelector('meta[name="csrf"]').content;
+    const MAX_MB   = 12;
 
     const vistas = {
         elegir:    document.getElementById('vista-elegir'),
@@ -26,43 +26,39 @@
     function elegirArchivo(file) {
         if (!file) return;
         if (!/^image\/(jpeg|png|webp)$/.test(file.type)) {
-            msgError.textContent = 'Formato no soportado. Usa JPG, PNG o WebP.';
+            msgError.textContent = 'Formato no soportado.';
             return;
         }
         if (file.size > MAX_MB * 1024 * 1024) {
-            msgError.textContent = 'La foto pesa más de ' + MAX_MB + ' MB.';
+            msgError.textContent = 'La foto pesa mas de ' + MAX_MB + ' MB.';
             return;
         }
         archivoSeleccionado = file;
-        const url = URL.createObjectURL(file);
+        const url  = URL.createObjectURL(file);
         const zona = document.getElementById('zona-confirmar');
         zona.innerHTML = '';
-        const img = new Image();
-        img.src = url;
-        img.alt = 'Tu foto';
+        const img  = new Image();
+        img.src    = url;
+        img.alt    = 'Tu foto';
         img.onload = () => URL.revokeObjectURL(url);
         zona.appendChild(img);
         mostrar('confirmar');
     }
 
-    // Botones de selección
-    const inputCamara  = document.getElementById('input-camara');
-    const inputGaleria = document.getElementById('input-galeria');
+    // Solo botón de cámara
+    const inputCamara = document.getElementById('input-camara');
     document.getElementById('btn-camara').addEventListener('click', () => inputCamara.click());
-    document.getElementById('btn-galeria').addEventListener('click', () => inputGaleria.click());
-    inputCamara.addEventListener('change',  e => elegirArchivo(e.target.files[0]));
-    inputGaleria.addEventListener('change', e => elegirArchivo(e.target.files[0]));
+    inputCamara.addEventListener('change', e => elegirArchivo(e.target.files[0]));
 
     document.getElementById('btn-otra').addEventListener('click', () => {
         archivoSeleccionado = null;
-        inputCamara.value = '';
-        inputGaleria.value = '';
+        inputCamara.value   = '';
         mostrar('elegir');
     });
+
     document.getElementById('btn-otra-mas').addEventListener('click', () => {
         archivoSeleccionado = null;
-        inputCamara.value = '';
-        inputGaleria.value = '';
+        inputCamara.value   = '';
         mostrar('elegir');
     });
 
@@ -76,30 +72,32 @@
         fd.append('photo', archivoSeleccionado);
 
         try {
-            const res = await fetch('api/upload.php', {
-                method: 'POST',
-                body: fd,
+            const res  = await fetch('api/upload.php', {
+                method:  'POST',
+                body:    fd,
                 headers: { 'X-CSRF-Token': csrf },
             });
             const data = await res.json();
 
             if (!data.ok) {
                 mostrar('confirmar');
-                msgError.textContent = data.error || 'Algo salió mal. Intenta de nuevo.';
+                msgError.textContent = data.error || 'Algo salio mal. Intenta de nuevo.';
                 return;
             }
 
+            // Mostrar foto resultante (el original guardado)
             const zona = document.getElementById('zona-resultado');
             zona.innerHTML = '';
-            const img = new Image();
-            img.src = data.url + '?v=' + Date.now();
-            img.alt = 'Tu foto con marca de agua';
+            const img  = new Image();
+            img.src    = data.url + '?v=' + Date.now();
+            img.alt    = 'Tu foto publicada';
             zona.appendChild(img);
+
             archivoSeleccionado = null;
             mostrar('resultado');
         } catch (err) {
             mostrar('confirmar');
-            msgError.textContent = 'Sin conexión con el servidor. Revisa tu señal e intenta otra vez.';
+            msgError.textContent = 'Sin conexion con el servidor. Revisa tu señal.';
         } finally {
             subiendo = false;
         }

@@ -1,5 +1,6 @@
 <?php
-// api/admin_action.php — acciones del panel admin: ocultar, restaurar y reproducir en pantalla.
+// api/admin_action.php v2 — ocultar, restaurar, eliminar, replay.
+
 require_once dirname(__DIR__) . '/inc/auth.php';
 af_security_headers();
 af_require_admin_api();
@@ -16,9 +17,10 @@ if ($photoId <= 0) {
 }
 
 $db = af_db();
-$exists = $db->prepare('SELECT id FROM photos WHERE id = ?');
-$exists->execute([$photoId]);
-if (!$exists->fetch()) {
+$row = $db->prepare('SELECT id, filename FROM photos WHERE id = ?');
+$row->execute([$photoId]);
+$photo = $row->fetch();
+if (!$photo) {
     af_json(['ok' => false, 'error' => 'La foto no existe'], 404);
 }
 
@@ -31,8 +33,14 @@ switch ($action) {
         $db->prepare('UPDATE photos SET visible = 1 WHERE id = ?')->execute([$photoId]);
         af_json(['ok' => true, 'visible' => 1]);
 
+    case 'delete':
+        // Eliminar permanentemente
+        $db->prepare('DELETE FROM photos WHERE id = ?')->execute([$photoId]);
+        $filePath = rtrim(UPLOADS_DIR, '/') . '/' . $photo['filename'];
+        if (file_exists($filePath)) @unlink($filePath);
+        af_json(['ok' => true, 'deleted' => true]);
+
     case 'replay':
-        // Volver a encolar la foto en la pantalla grande (FIFO)
         $db->prepare('INSERT INTO screen_queue (photo_id) VALUES (?)')->execute([$photoId]);
         af_json(['ok' => true, 'queued' => true]);
 

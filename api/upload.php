@@ -1,6 +1,6 @@
 <?php
-// api/upload.php — recibe la foto, la valida, la re-codifica (elimina metadatos
-// y cualquier payload incrustado), le estampa la marca de agua y la encola FIFO.
+// api/upload.php v2 — recibe la foto (solo desde cámara), valida, guarda el ORIGINAL
+// sin marca de agua, y detecta si se alcanza un milestone.
 
 require_once dirname(__DIR__) . '/inc/helpers.php';
 af_session_start();
@@ -16,7 +16,7 @@ $db = af_db();
 $stmt = $db->prepare('SELECT COUNT(*) c FROM photos WHERE uploader_ip = ? AND created_at > (NOW() - INTERVAL 1 MINUTE)');
 $stmt->execute([af_client_ip_bin()]);
 if ((int)$stmt->fetch()['c'] >= UPLOADS_PER_MINUTE_PER_IP) {
-    af_json(['ok' => false, 'error' => 'Tranqui 😅 estás subiendo muy rápido. Espera un minuto.'], 429);
+    af_json(['ok' => false, 'error' => 'Estás subiendo muy rápido. Espera un minuto.'], 429);
 }
 
 // ---------- Validación del archivo ----------
@@ -32,9 +32,8 @@ if (!is_uploaded_file($file['tmp_name'])) {
     af_json(['ok' => false, 'error' => 'Subida inválida.'], 400);
 }
 
-// MIME real (no confiar en la extensión ni en el header del cliente)
-$finfo = new finfo(FILEINFO_MIME_TYPE);
-$mime  = $finfo->file($file['tmp_name']);
+$finfo   = new finfo(FILEINFO_MIME_TYPE);
+$mime    = $finfo->file($file['tmp_name']);
 $allowed = ['image/jpeg', 'image/png', 'image/webp'];
 if (!in_array($mime, $allowed, true)) {
     af_json(['ok' => false, 'error' => 'Formato no soportado. Usa JPG, PNG o WebP.'], 415);
@@ -55,7 +54,7 @@ if (!$img) {
     af_json(['ok' => false, 'error' => 'No se pudo procesar la imagen.'], 415);
 }
 
-// Rotación según EXIF (fotos de celular en vertical)
+// Rotación EXIF (fotos de celular)
 if ($mime === 'image/jpeg' && function_exists('exif_read_data')) {
     $exif = @exif_read_data($file['tmp_name']);
     if (!empty($exif['Orientation'])) {
@@ -72,8 +71,8 @@ $w = imagesx($img);
 $h = imagesy($img);
 if (max($w, $h) > MAX_DIMENSION) {
     $ratio = MAX_DIMENSION / max($w, $h);
-    $nw = (int)round($w * $ratio);
-    $nh = (int)round($h * $ratio);
+    $nw    = (int)round($w * $ratio);
+    $nh    = (int)round($h * $ratio);
     $resized = imagecreatetruecolor($nw, $nh);
     imagecopyresampled($resized, $img, 0, 0, 0, 0, $nw, $nh, $w, $h);
     imagedestroy($img);
@@ -81,44 +80,14 @@ if (max($w, $h) > MAX_DIMENSION) {
     $w = $nw; $h = $nh;
 }
 
-// ---------- Marca de agua ----------
-if (!file_exists(WATERMARK_PATH)) {
-    imagedestroy($img);
-    af_json(['ok' => false, 'error' => 'Falta el PNG de marca de agua en el servidor.'], 500);
+// ---------- Guardar ORIGINAL (sin marca de agua) ----------
+if (!is_dir(UPLOADS_DIR)) {
+    mkdir(UPLOADS_DIR, 0775, true);
 }
-$wm = @imagecreatefrompng(WATERMARK_PATH);
-if (!$wm) {
-    imagedestroy($img);
-    af_json(['ok' => false, 'error' => 'No se pudo cargar la marca de agua.'], 500);
-}
-imagealphablending($wm, true);
-imagesavealpha($wm, true);
 
-$wmW = imagesx($wm);
-$wmH = imagesy($wm);
-$targetW = (int)round($w * WATERMARK_SCALE);
-$targetH = (int)round($wmH * ($targetW / $wmW));
-
-// Abajo al centro, con margen proporcional
-$margin = (int)round(min($w, $h) * WATERMARK_MARGIN);
-$dstX = (int)round(($w - $targetW) / 2);
-$dstY = $h - $targetH - $margin;
-
-$wmScaled = imagecreatetruecolor($targetW, $targetH);
-imagealphablending($wmScaled, false);
-imagesavealpha($wmScaled, true);
-$transparent = imagecolorallocatealpha($wmScaled, 0, 0, 0, 127);
-imagefill($wmScaled, 0, 0, $transparent);
-imagecopyresampled($wmScaled, $wm, 0, 0, 0, 0, $targetW, $targetH, $wmW, $wmH);
-imagedestroy($wm);
-
-imagealphablending($img, true);
-imagecopy($img, $wmScaled, $dstX, $dstY, 0, 0, $targetW, $targetH);
-imagedestroy($wmScaled);
-
-// ---------- Guardar con nombre aleatorio (re-codificado a JPEG limpio) ----------
 $filename = bin2hex(random_bytes(16)) . '.jpg';
 $destPath = rtrim(UPLOADS_DIR, '/') . '/' . $filename;
+
 if (!imagejpeg($img, $destPath, JPEG_QUALITY)) {
     imagedestroy($img);
     af_json(['ok' => false, 'error' => 'No se pudo guardar la foto.'], 500);
@@ -128,12 +97,29 @@ imagedestroy($img);
 
 $orientation = $w > $h ? 'horizontal' : ($w < $h ? 'vertical' : 'cuadrada');
 
-// ---------- Registrar y encolar (FIFO para la pantalla) ----------
+// ---------- Registrar, encolar y detectar milestone ----------
 $db->beginTransaction();
 try {
     $db->prepare('INSERT INTO photos (filename, width, height, orientation, uploader_ip) VALUES (?,?,?,?,?)')
        ->execute([$filename, $w, $h, $orientation, af_client_ip_bin()]);
     $photoId = (int)$db->lastInsertId();
+
+    // Total de fotos visible → detectar milestone
+    $totalRow   = $db->query('SELECT COUNT(*) c FROM photos')->fetch();
+    $total      = (int)$totalRow['c'];
+    $milestone  = 0;
+
+    if ($total % MILESTONE_EVERY === 0) {
+        // Verificar que no esté ya registrado
+        $mCheck = $db->prepare('SELECT id FROM milestones WHERE quantity = ?');
+        $mCheck->execute([$total]);
+        if (!$mCheck->fetch()) {
+            $db->prepare('INSERT INTO milestones (quantity, photo_id) VALUES (?,?)')
+               ->execute([$total, $photoId]);
+            $milestone = $total;
+        }
+    }
+
     $db->prepare('INSERT INTO screen_queue (photo_id) VALUES (?)')->execute([$photoId]);
     $db->commit();
 } catch (Throwable $t) {
@@ -143,7 +129,9 @@ try {
 }
 
 af_json([
-    'ok'  => true,
-    'url' => UPLOADS_URL . '/' . $filename,
+    'ok'          => true,
+    'url'         => UPLOADS_URL . '/' . $filename,
     'orientation' => $orientation,
+    'photoId'     => $photoId,
+    'milestone'   => $milestone,   // 0 = sin logro, N = logro N memories
 ]);

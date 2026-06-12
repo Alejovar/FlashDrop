@@ -1,16 +1,15 @@
--- FLASHDROP — Esquema de base de datos
+-- FLASHDROP v2 — Esquema de base de datos
 -- Importar con: mysql -u flashdrop_app -p flashdrop < db.sql
--- O en deploy automatizado: mysql < db.sql (si está configurado en config.php)
 
 CREATE DATABASE IF NOT EXISTS flashdrop CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE flashdrop;
 
 -- ============================================================
--- Tabla principal de fotos (con marca de agua estampada)
+-- Tabla principal de fotos — guarda el original sin marca de agua
 -- ============================================================
 CREATE TABLE IF NOT EXISTS photos (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    filename VARCHAR(64) NOT NULL UNIQUE,
+    filename VARCHAR(64) NOT NULL UNIQUE,          -- archivo original en /uploads/originals/
     width SMALLINT UNSIGNED NOT NULL,
     height SMALLINT UNSIGNED NOT NULL,
     orientation ENUM('horizontal','vertical','cuadrada') NOT NULL DEFAULT 'vertical',
@@ -26,7 +25,6 @@ CREATE TABLE IF NOT EXISTS photos (
 
 -- ============================================================
 -- Cola FIFO para la pantalla grande
--- Cada subida inserta una fila; el admin puede re-encolar con "Reproducir"
 -- ============================================================
 CREATE TABLE IF NOT EXISTS screen_queue (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -44,7 +42,7 @@ CREATE TABLE IF NOT EXISTS screen_queue (
 CREATE TABLE IF NOT EXISTS admins (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     username VARCHAR(40) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,      -- password_hash(password, PASSWORD_DEFAULT)
+    password_hash VARCHAR(255) NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_login DATETIME,
     PRIMARY KEY (id),
@@ -63,25 +61,20 @@ CREATE TABLE IF NOT EXISTS login_attempts (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
--- Índices y triggers para mantenimiento
+-- Historial de logros (hitos automáticos cada 15 fotos)
 -- ============================================================
-
--- Trigger: limpiar screen_queue después de procesar (opcional, para mantener tabla pequeña)
--- DELIMITER //
--- CREATE TRIGGER cleanup_old_queue AFTER INSERT ON screen_queue
--- FOR EACH ROW BEGIN
---   DELETE FROM screen_queue WHERE enqueued_at < DATE_SUB(NOW(), INTERVAL 24 HOUR);
--- END//
--- DELIMITER ;
+CREATE TABLE IF NOT EXISTS milestones (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    quantity INT UNSIGNED NOT NULL,          -- 15, 30, 45, 60 …
+    photo_id INT UNSIGNED NOT NULL,          -- foto protagonista
+    achieved_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_quantity (quantity),
+    KEY idx_photo (photo_id),
+    CONSTRAINT fk_milestone_photo FOREIGN KEY (photo_id) REFERENCES photos(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================================
 -- El usuario admin se crea con:
 --   php tools/crear_admin.php usuario contraseña_fuerte
 -- ============================================================
-
--- Datos iniciales (opcional, comentado por defecto)
--- INSERT INTO admins (username, password_hash) VALUES ('admin', '$2y$10$...');  -- generar con password_hash()
-
--- CREATE USER 'flashdrop_app'@'localhost' IDENTIFIED BY 'contraseña_fuerte';
--- GRANT SELECT, INSERT, UPDATE ON flashdrop.* TO 'flashdrop_app'@'localhost';
--- FLUSH PRIVILEGES;

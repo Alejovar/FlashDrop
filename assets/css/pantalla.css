@@ -1,10 +1,14 @@
-/* pantalla.css — estilos exclusivos de la pantalla grande */
+/* pantalla.css v2 — overlays sobre el video. El video NUNCA se detiene. */
 
 .pantalla-body {
     overflow: hidden;
     background: #000;
+    font-family: 'Courier New', Courier, monospace;
 }
 
+/* ============================================================
+   VIDEO
+   ============================================================ */
 .visual-loop {
     position: fixed;
     inset: 0;
@@ -14,31 +18,125 @@
     z-index: 1;
 }
 
+/* ============================================================
+   LOGO
+   ============================================================ */
 .logo-pantalla {
     position: fixed;
     top: 22px;
     left: 26px;
-    width: clamp(160px, 16vw, 280px);
+    width: clamp(140px, 14vw, 260px);
     z-index: 10;
-    filter: drop-shadow(0 0 20px rgba(31, 86, 255, .7));
+    filter: drop-shadow(0 0 20px rgba(31, 86, 255, .8));
 }
 
-/* ---------- Toast MSN (esquina inferior derecha) ---------- */
+/* ============================================================
+   HUD — esquina superior derecha, siempre visible
+   ============================================================ */
+.hud {
+    position: fixed;
+    top: 22px;
+    right: 26px;
+    z-index: 20;
+    background: rgba(4, 5, 13, .72);
+    border: 1px solid rgba(111, 179, 255, .4);
+    border-radius: 6px;
+    padding: 10px 16px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 0 18px rgba(31, 86, 255, .3), inset 0 1px 0 rgba(255,255,255,.06);
+    min-width: 140px;
+}
+
+.hud-sep {
+    color: rgba(111, 179, 255, .5);
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-align: center;
+    margin: 2px 0;
+}
+
+.hud-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 4px 0;
+}
+
+.hud-num {
+    font-size: 22px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 1px;
+    text-shadow: 0 0 12px rgba(111, 179, 255, .7);
+    min-width: 42px;
+    text-align: right;
+}
+
+.hud-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgba(111, 179, 255, .8);
+    text-transform: uppercase;
+}
+
+.hud-live {
+    align-items: center;
+    gap: 8px;
+}
+
+.hud-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: #ff2a2a;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #ff2a2a;
+    animation: pulso-live 1.2s ease-in-out infinite;
+    flex-shrink: 0;
+    margin-left: 42px;
+}
+
+@keyframes pulso-live {
+    0%, 100% { opacity: 1; box-shadow: 0 0 8px #ff2a2a; }
+    50%       { opacity: .4; box-shadow: 0 0 3px #ff2a2a; }
+}
+
+/* ============================================================
+   TOAST MSN — nueva foto
+   ============================================================ */
 .msn-toast {
     position: fixed;
     right: 24px;
     bottom: 24px;
-    width: 300px;
+    width: 320px;
     z-index: 30;
     border-radius: 10px;
     overflow: hidden;
     background: linear-gradient(180deg, #11162e, #0b0e1e);
-    border: 1px solid rgba(140, 160, 230, .5);
-    box-shadow: 0 0 30px rgba(31, 86, 255, .55);
-    transform: translateY(140%);
-    transition: transform .45s cubic-bezier(.2, .9, .3, 1.1);
+    border: 1px solid rgba(140, 160, 230, .6);
+    box-shadow:
+        0 0 30px rgba(31, 86, 255, .55),
+        0 0 0 1px rgba(0,0,0,.7),
+        inset 0 1px 0 rgba(255,255,255,.08);
+    transform: translateY(150%);
+    transition: transform .5s cubic-bezier(.2, .9, .3, 1.08);
 }
-.msn-toast.visible { transform: translateY(0); }
+
+.msn-toast.visible {
+    transform: translateY(0);
+}
+
+/* Adaptar tamaño imagen según orientación */
+.msn-toast.vertical .toast-img-wrap img {
+    width: 74px;
+    height: 100px;
+    object-fit: cover;
+}
+.msn-toast.horizontal .toast-img-wrap img {
+    width: 120px;
+    height: 74px;
+    object-fit: cover;
+}
 
 .toast-cuerpo {
     display: flex;
@@ -46,67 +144,142 @@
     gap: 12px;
     padding: 12px;
 }
-.toast-cuerpo img {
+
+#toast-img {
     width: 74px;
     height: 74px;
     object-fit: cover;
     border-radius: 6px;
     border: 1px solid rgba(140, 160, 230, .5);
+    box-shadow: 0 0 10px rgba(31, 86, 255, .3);
+    flex-shrink: 0;
 }
+
+/* Orientación vertical/horizontal de la imagen en el toast */
+.msn-toast.vertical   #toast-img { width: 60px;  height: 88px; }
+.msn-toast.horizontal #toast-img { width: 110px; height: 68px; }
+
 .toast-texto {
-    font-size: 13px;
+    font-size: 12px;
     color: #e8ecff;
-    line-height: 1.45;
+    line-height: 1.5;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    font-family: Tahoma, Verdana, sans-serif;
 }
 
-/* ---------- Ventana destacada (esquina superior derecha) ---------- */
-.feature-window {
-    position: fixed;
-    top: 26px;
-    right: 26px;
-    z-index: 25;
-    border-radius: 12px;
-    overflow: hidden;
-    background: #0b0e1e;
-    border: 1px solid rgba(140, 160, 230, .55);
-    box-shadow: 0 0 50px rgba(31, 86, 255, .65), 0 0 0 1px rgba(0,0,0,.8);
-    opacity: 0;
-    transform: scale(.7);
-    transition: opacity .5s ease, transform .5s cubic-bezier(.2, .9, .3, 1.15);
-}
-.feature-window.visible {
-    opacity: 1;
-    transform: scale(1);
-}
-.feature-window.saliendo {
-    opacity: 0;
-    transform: scale(.85) translateY(-16px);
-    transition: opacity .6s ease, transform .6s ease;
-}
-
-/* La ventana se adapta a la orientación de la foto */
-.feature-window.vertical img   { height: min(64vh, 760px); width: auto; }
-.feature-window.horizontal img { width: min(38vw, 700px); height: auto; }
-.feature-window.cuadrada img   { width: min(30vw, 520px); height: auto; }
-
-.feature-window img {
-    display: block;
-    max-width: 42vw;
-    max-height: 68vh;
-}
-
-/* ---------- Overlay de inicio ---------- */
-.overlay-inicio {
+/* ============================================================
+   LOGRO / MILESTONE OVERLAY
+   ============================================================ */
+.logro-overlay {
     position: fixed;
     inset: 0;
     z-index: 50;
+    background: rgba(2, 3, 12, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .7s ease;
+}
+
+.logro-overlay.visible {
+    background: rgba(2, 3, 12, .65);
+}
+
+.logro-overlay.saliendo {
+    background: rgba(2, 3, 12, 0);
+    transition: background .7s ease;
+}
+
+.logro-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Foto protagonista del logro */
+.logro-foto {
+    border-radius: 12px;
+    border: 2px solid rgba(111, 179, 255, .7);
+    box-shadow:
+        0 0 60px rgba(31, 86, 255, .8),
+        0 0 120px rgba(31, 86, 255, .4),
+        0 0 0 1px rgba(255,255,255,.1);
+    opacity: 0;
+    transform: scale(.7);
+    transition: opacity .8s ease, transform .8s cubic-bezier(.2, .9, .3, 1.15);
+}
+
+.logro-overlay.visible .logro-foto {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.logro-foto.vertical   { height: min(55vh, 680px); width: auto; }
+.logro-foto.horizontal { width: min(50vw, 800px);  height: auto; }
+.logro-foto.cuadrada   { width: min(40vw, 600px);  height: auto; }
+
+/* Texto del logro: "N MEMORIES" */
+.logro-texto {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: clamp(28px, 6vw, 72px);
+    font-weight: 900;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: #fff;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity .6s ease, transform .6s ease;
+    text-shadow:
+        0 0 20px rgba(111, 179, 255, 1),
+        0 0 60px rgba(31, 86, 255, .8),
+        0 0 100px rgba(31, 86, 255, .4);
+    position: relative;
+}
+
+.logro-texto::before,
+.logro-texto::after {
+    content: '━━━━━━━━━━━━━━━━━';
+    display: block;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: rgba(111, 179, 255, .6);
+    margin: 8px 0;
+    text-shadow: none;
+}
+
+.logro-texto.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Canvas de partículas — cubre toda la pantalla, z sobre el overlay oscuro pero bajo el inner */
+.logro-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 51;
+    pointer-events: none;
+}
+
+/* ============================================================
+   OVERLAY DE INICIO
+   ============================================================ */
+.overlay-inicio {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
     background: #04050d;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 30px;
+    gap: 32px;
 }
+
 .overlay-inicio img { width: min(60%, 480px); }
-.overlay-inicio .btn { width: auto; padding: 16px 44px; font-size: 18px; }
+.overlay-inicio .btn { width: auto; padding: 16px 52px; font-size: 16px; letter-spacing: 2px; }
 .overlay-inicio.oculto { display: none; }

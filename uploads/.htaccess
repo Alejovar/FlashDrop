@@ -1,7 +1,22 @@
-# Nunca ejecutar código dentro de /uploads — solo servir imágenes.
-<FilesMatch "\.(php|phtml|php3|php4|php5|php7|phar|pl|py|cgi|sh)$">
+# Bloquear listado de directorios
+Options -Indexes
+
+# Solo JPEG permitido desde este directorio (los originales)
+<FilesMatch "\.jpg$">
+    Header set X-Content-Type-Options "nosniff"
+</FilesMatch>
+
+# Bloquear cualquier cosa que no sea JPEG o el .htaccess
+<FilesMatch "^(?!.*\.(jpg|htaccess)$)">
     Require all denied
 </FilesMatch>
+
+# NO permitir ejecución de PHP en uploads
 php_flag engine off
-RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .phar
-Options -ExecCGI -Indexes
+
+# Bloquear acceso al directorio de originales desde fuera (solo via PHP)
+# Los invitados solo descargan via api/polaroid.php, nunca directamente
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^originals/.+$ - [F,L]
+</IfModule>

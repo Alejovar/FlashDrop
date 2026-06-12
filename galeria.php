@@ -1,5 +1,4 @@
 <?php
-// galeria.php — galería pública de fotos (responsiva, con lightbox).
 require_once __DIR__ . '/inc/helpers.php';
 af_session_start();
 af_security_headers();
@@ -9,39 +8,39 @@ af_security_headers();
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Galería — FLASHDROP</title>
+<title>Galeria &mdash; FLASHDROP</title>
 <link rel="stylesheet" href="assets/css/y2k.css">
 </head>
 <body>
-<span class="estrella" style="top:6%; left:6%;">✦</span>
-<span class="estrella" style="top:12%; right:10%; animation-delay:.7s;">✧</span>
-
 <div class="contenedor ancha">
-    <a class="nav-volver" href="index.php">⬅ Volver al menú</a>
+    <a class="nav-volver" href="index.php">VOLVER AL MENU</a>
     <img src="assets/logo.png" alt="FLASHDROP" class="logo-cabecera">
-    <p class="subtitulo">★ Galería de la fiesta ★</p>
+    <p class="subtitulo">GALERIA DE LA FIESTA</p>
 
     <div class="msn-window">
         <div class="msn-titlebar">
-            <span class="titulo">Fotos compartidas (<span id="contador">…</span>)</span>
-            <span class="controles"><span>_</span><span>□</span><span>✕</span></span>
+            <span class="titulo">Fotos compartidas (<span id="contador">...</span>)</span>
+            <span class="controles"><span>_</span><span>□</span><span>X</span></span>
         </div>
         <div class="msn-cuerpo">
             <div class="galeria" id="galeria"></div>
-            <p class="aviso" id="vacio" hidden>Aún no hay fotos… ¡sé la primera persona en subir una! 📸</p>
+            <p class="aviso" id="vacio" hidden>Aun no hay fotos. Se la primera en subir una.</p>
             <div class="menu-opciones" style="margin-top:14px;">
-                <button class="btn secundario" id="btn-mas" type="button" hidden>⬇ Cargar más</button>
-                <a class="btn" href="subir.php">📸 Subir mi foto</a>
+                <button class="btn secundario" id="btn-mas" type="button" hidden>CARGAR MAS</button>
+                <a class="btn" href="subir.php">TOMAR MI FOTO</a>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Lightbox — solo muestra la foto, no el link directo al original -->
 <div class="lightbox" id="lightbox" role="dialog" aria-label="Foto ampliada">
+    <div class="lightbox-acciones">
+        <a class="btn mini" id="lb-download-polaroid" href="#" download>DESCARGAR RECUERDO</a>
+    </div>
     <img id="lightbox-img" src="" alt="Foto ampliada">
 </div>
 
-<img src="assets/monito.png" alt="" class="monito-flotante">
 <script src="assets/js/galeria.js"></script>
 </body>
 </html>

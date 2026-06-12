@@ -336,3 +336,60 @@ body {
 }
 .stat .num { font-size: 26px; font-weight: 900; font-style: italic; }
 .stat .etq { font-size: 11px; color: var(--texto-suave); letter-spacing: 1px; text-transform: uppercase; }
+
+/* ============================================================
+   FLASHDROP v2 — Addons
+   ============================================================ */
+
+/* Lightbox con botón de descarga Polaroid */
+.lightbox {
+    flex-direction: column;
+    gap: 14px;
+}
+
+.lightbox-acciones {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    z-index: 61;
+}
+
+.lightbox.abierto .lightbox-acciones { display: flex; }
+.lightbox:not(.abierto) .lightbox-acciones { display: none; }
+
+/* Galería item wrapper */
+.galeria-item {
+    break-inside: avoid;
+    margin-bottom: 10px;
+}
+
+/* Admin card acciones en fila */
+.admin-card .acciones {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+/* Historial de logros en dashboard */
+.milestone-list { list-style: none; }
+.milestone-list li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(140,160,230,.12);
+    font-size: 13px;
+    color: var(--texto-suave);
+}
+.milestone-list li:last-child { border-bottom: none; }
+.milestone-list .m-qty { font-size: 15px; font-weight: 900; color: var(--azul-cielo); min-width: 100px; letter-spacing: 1px; }
+.milestone-list img { width: 40px; height: 40px; object-fit: cover; border-radius: 5px; border: 1px solid rgba(140,160,230,.3); }
+
+/* Stats grid en dashboard */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-bottom: 18px; }
+.stat-card { background: var(--negro-panel); border: 1px solid rgba(140,160,230,.35); border-radius: 10px; padding: 14px; text-align: center; }
+.stat-num { font-size: 28px; font-weight: 900; font-style: italic;
+    background: linear-gradient(180deg, #ffffff 0%, #d7dcef 38%, #828aa8 50%, #c3c9de 62%, #ffffff 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent; }
+.stat-lbl { font-size: 10px; color: var(--texto-suave); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px; }
+.stat-sub { font-size: 11px; color: var(--azul-cielo); margin-top: 2px; word-break: break-all; }
+.online-dot { display: inline-block; width: 7px; height: 7px; background: var(--ok); border-radius: 50%; margin-right: 4px; box-shadow: 0 0 6px var(--ok); }
