@@ -74,10 +74,12 @@
    ============================================================ */
 .logro-overlay {
     position:fixed; inset:0; z-index:50;
-    display:flex; align-items:center; justify-content:center;
+    display:flex; align-items:flex-start; justify-content:center;
+    padding-top: clamp(16px, 4vh, 48px);
     background:rgba(2,3,12,0);
     transition:background .6s ease;
     --logro-overlay-bg: rgba(2,3,12,.82);
+    overflow:hidden;
 }
 .logro-overlay.visible  { background:var(--logro-overlay-bg); }
 .logro-overlay.saliendo { background:rgba(2,3,12,0); transition:background .8s ease; }
@@ -167,16 +169,17 @@
 }
 @keyframes marco-girar { to { transform:rotate(360deg); } }
 
-/* Foto — se ajusta al espacio disponible en la columna central */
+/* Foto — se ajusta al espacio disponible sin aplastarse */
 .logro-foto {
     display:block; border-radius:12px; position:relative; z-index:1;
     border:3px solid rgba(255,255,255,.9);
     box-shadow:0 0 0 1px rgba(200,220,255,.3), 0 0 50px rgba(31,86,255,.7);
     max-width:100%;
+    max-height:68vh;
 }
-.logro-foto.vertical   { height:min(62vh, 680px); width:auto; }
-.logro-foto.horizontal { height:min(52vh, 560px); width:auto; max-width:100%; }
-.logro-foto.cuadrada   { height:min(52vh, 560px); width:auto; }
+.logro-foto.vertical   { height:min(65vh, 700px); width:auto; }
+.logro-foto.horizontal { width:min(50vw,  800px); height:auto; max-height:62vh; }
+.logro-foto.cuadrada   { height:min(58vh, 620px); width:auto; }
 
 .logro-marco-esquinas { position:absolute; inset:0; pointer-events:none; }
 .esq { position:absolute; width:22px; height:22px; border-color:#7eb3ff; border-style:solid; animation:esq-brillo 1.5s ease-in-out infinite alternate; }
