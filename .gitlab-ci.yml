@@ -20,54 +20,26 @@ deploy_production:
   stage: deploy
   image: alpine:latest
   script:
-    # Herramientas SSH / rsync
     - apk add --no-cache openssh-client rsync
-
-    # Configurar SSH
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - echo "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key && chmod 600 ~/.ssh/deploy_key
     - ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts 2>/dev/null
-
-    # Crear directorio y ajustar propietario
-    - ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST}
-        "sudo mkdir -p /var/www/flashdrop && sudo chown -R ${DEPLOY_USER}:www-data /var/www/flashdrop"
-
-    # Sincronizar código (excluir .git, uploads y video)
-    - rsync -az --delete
-        --exclude=".git"
-        --exclude="uploads"
-        --exclude="video"
-        -e "ssh -i ~/.ssh/deploy_key"
-        ./ ${DEPLOY_USER}@${DEPLOY_HOST}:/var/www/flashdrop/
-
-    # Post-deploy en el servidor
-    - ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} "
-        set -e
-        cd /var/www/flashdrop
-
-        # Aplicar esquema DB (idempotente — IF NOT EXISTS)
-        sudo mysql flashdrop < db.sql
-
-        # Crear estructura de directorios v2
-        mkdir -p uploads/originals video
-        chmod -R 775 uploads video
-
-        # Permisos
-        sudo chown -R ${DEPLOY_USER}:www-data /var/www/flashdrop
-
-        # Recargar PHP y Nginx
-        sudo systemctl reload php8.3-fpm
-        sudo systemctl reload nginx
-
-        # Health check
-        sleep 2
-        STATUS=\$(curl -s -o /dev/null -w '%{http_code}' http://localhost/index.php 2>/dev/null || echo 000)
-        if echo \$STATUS | grep -q '^5'; then
-          echo 'Health check FAILED: HTTP '\$STATUS
-          exit 1
-        fi
-        echo 'Health check OK: HTTP '\$STATUS
-      "
+    - ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} "sudo mkdir -p /var/www/flashdrop && sudo chown -R ${DEPLOY_USER}:www-data /var/www/flashdrop"
+    - rsync -az --delete --exclude=".git" --exclude="uploads" --exclude="video" -e "ssh -i ~/.ssh/deploy_key" ./ ${DEPLOY_USER}@${DEPLOY_HOST}:/var/www/flashdrop/
+    - >-
+      ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST}
+      "set -e;
+      cd /var/www/flashdrop;
+      sudo mysql flashdrop < db.sql;
+      mkdir -p uploads/originals video;
+      chmod -R 775 uploads video;
+      sudo chown -R ${DEPLOY_USER}:www-data /var/www/flashdrop;
+      sudo systemctl reload php8.3-fpm;
+      sudo systemctl reload nginx;
+      sleep 2;
+      STATUS=\$(curl -s -o /dev/null -w '%{http_code}' http://localhost/index.php 2>/dev/null || echo 000);
+      echo \$STATUS | grep -q '^5' && { echo 'Health check FAILED: HTTP '\$STATUS; exit 1; };
+      echo 'Health check OK: HTTP '\$STATUS"
   only:
     - main
   when: manual
