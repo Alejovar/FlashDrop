@@ -17,7 +17,6 @@ af_security_headers();
 <body class="pantalla-body">
 
 <video id="visual" class="visual-loop" src="video/loop.mp4" autoplay muted loop playsinline></video>
-<img src="assets/logo.png" alt="FLASHDROP" class="logo-pantalla">
 
 <!-- HUD -->
 <div id="hud" class="hud">
@@ -70,10 +69,10 @@ af_security_headers();
             <span class="logro-badge-line"></span>
         </div>
 
-        <!-- Número grande: "100 MEMORIES" -->
+        <!-- Número grande: columna izquierda -->
         <div class="logro-titulo" id="logro-titulo"></div>
 
-        <!-- Marco de la foto con bordes brillantes -->
+        <!-- Marco de la foto: columna central -->
         <div class="logro-foto-wrap" id="logro-foto-wrap">
             <div class="logro-marco-brillo"></div>
             <img id="logro-img" class="logro-foto" src="" alt="Foto del logro">
@@ -85,17 +84,16 @@ af_security_headers();
             </div>
         </div>
 
-        <!-- Subtítulo inferior -->
-        <div class="logro-sub" id="logro-sub">
-            <span class="logro-sub-top">LA FIESTA ESTA EN SU MEJOR MOMENTO</span>
-            <span class="logro-sub-bot">ALEJOFEST VOL.21</span>
-        </div>
-
-        <!-- Etiqueta inferior "RECORD ALCANZADO" -->
-        <div class="logro-record" id="logro-record">
-            <span class="logro-record-line"></span>
-            <span class="logro-record-text">RECORD ALCANZADO</span>
-            <span class="logro-record-line"></span>
+        <!-- Subtítulo + record: columna derecha -->
+        <div class="logro-derecha">
+            <div class="logro-sub" id="logro-sub">
+                <span class="logro-sub-top">LA FIESTA ESTA EN SU MEJOR MOMENTO</span>
+                <span class="logro-sub-bot">ALEJOFEST VOL.21</span>
+            </div>
+            <div class="logro-record" id="logro-record">
+                <span class="logro-record-line"></span>
+                <span class="logro-record-text">RECORD ALCANZADO</span>
+            </div>
         </div>
 
     </div>
