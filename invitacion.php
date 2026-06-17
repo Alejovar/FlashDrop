@@ -2,8 +2,8 @@
 require_once __DIR__ . '/inc/helpers.php';
 af_session_start();
 
-// CSP personalizado para permitir Google Maps
-header("Content-Security-Policy: default-src 'self'; frame-src 'self' https://www.google.com; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data: https:;");
+// CSP personalizado para permitir Leaflet
+header("Content-Security-Policy: default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https:; font-src 'self';");
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: SAMEORIGIN');
 
@@ -23,6 +23,7 @@ $evento = [
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?= $evento['nombre'] ?> — Invitación</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="assets/css/y2k.css">
 <link rel="stylesheet" href="assets/css/invitacion.css">
 </head>
@@ -39,15 +40,9 @@ $evento = [
         <img src="assets/img/invitacion.png" alt="Invitación AlejoFest Vol.21" class="inv-image">
     </div>
 
-    <!-- UBICACIÓN -->
-    <div class="inv-location-section">
-        <h2 class="inv-section-title">UBICACIÓN</h2>
-        <p class="inv-address"><?= $evento['direccion'] ?></p>
-    </div>
-
-    <!-- MAPA -->
+    <!-- MAPA CON LOGO COMO MARCADOR -->
     <div class="inv-map-section">
-        <iframe class="inv-map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3750.5789063563776!2d-101.00319!3d25.429!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8662bf37cc7bbbbb%3A0x1234567890!2sFrancisco%20M%C3%A1rquez%20119!5e0!3m2!1ses!2smx!4v1234567890" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <div id="inv-map" class="inv-map"></div>
     </div>
 
     <!-- BOTÓN CÓMO LLEGAR -->
@@ -58,6 +53,16 @@ $evento = [
     </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="assets/js/invitacion.js"></script>
+<script>
+    const evento = {
+        lat: <?= $evento['lat'] ?>,
+        lng: <?= $evento['lng'] ?>,
+        nombre: '<?= $evento['nombre'] ?>',
+        direccion: '<?= $evento['direccion'] ?>'
+    };
+    inicializarMapa(evento);
+</script>
 </body>
 </html>

@@ -25,4 +25,31 @@
             }
         });
     }
+
+    // Inicializar mapa con Leaflet
+    window.inicializarMapa = function(evento) {
+        const mapEl = document.getElementById('inv-map');
+        if (!mapEl || typeof L === 'undefined') return;
+
+        const map = L.map('inv-map').setView([evento.lat, evento.lng], 16);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap',
+            maxZoom: 18,
+        }).addTo(map);
+
+        // Crear icono personalizado con el logo
+        const logoIcon = L.icon({
+            iconUrl: 'assets/logo.png',
+            iconSize: [50, 50],
+            iconAnchor: [25, 50],
+            popupAnchor: [0, -50],
+        });
+
+        const marker = L.marker([evento.lat, evento.lng], { icon: logoIcon }).addTo(map);
+        marker.bindPopup(`<strong>${evento.nombre}</strong>`);
+        marker.openPopup();
+
+        return map;
+    };
 })();
