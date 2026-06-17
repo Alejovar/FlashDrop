@@ -229,7 +229,7 @@ $invitados = $db->query(
         </div>
     </div>
 
-    <!-- === TEST DE ANIMACIONES === -->
+    <!-- === TEST DE ANIMACIONES 1=== -->
     <div class="msn-window" style="max-width:500px; margin:0 auto 18px;">
         <div class="msn-titlebar">
             <span class="titulo">Test de animaciones &mdash; pantalla.php</span>
