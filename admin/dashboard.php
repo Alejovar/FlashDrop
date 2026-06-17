@@ -29,6 +29,11 @@ $fotos = $db->query(
     'SELECT id, filename, orientation, visible, created_at
      FROM photos ORDER BY id DESC LIMIT 500'
 )->fetchAll();
+
+// Invitados confirmados (RSVP)
+$invitados = $db->query(
+    'SELECT id, nombre, habilitado, bebidas FROM invitados ORDER BY nombre ASC'
+)->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -56,6 +61,30 @@ $fotos = $db->query(
 .milestone-list img { width:40px; height:40px; object-fit:cover; border-radius:5px; border:1px solid rgba(140,160,230,.3); }
 
 .online-dot { display:inline-block; width:7px; height:7px; background:var(--ok); border-radius:50%; margin-right:4px; box-shadow:0 0 6px var(--ok); }
+
+.invitados-lista { max-height:340px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; }
+.invitado-row {
+    display:flex; align-items:center; gap:10px; padding:10px 12px;
+    background:rgba(140,160,230,.06); border:1px solid rgba(140,160,230,.18);
+    border-radius:8px; flex-wrap:wrap;
+}
+.invitado-row.deshabilitado { opacity:.5; background:rgba(255,80,80,.05); border-color:rgba(255,80,80,.2); }
+.invitado-nombre { font-weight:600; font-size:13px; flex:1; min-width:120px; }
+.invitado-bebidas { font-size:12px; color:var(--azul-cielo); white-space:nowrap; }
+.invitado-estado { font-size:10px; letter-spacing:1px; color:var(--texto-suave); text-transform:uppercase; white-space:nowrap; }
+.invitado-row.deshabilitado .invitado-estado { color:#ff8888; }
+.btn-toggle-invitado { white-space:nowrap; }
+
+.loops-lista { display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto; }
+.loop-row {
+    display:flex; align-items:center; gap:10px; padding:10px 12px;
+    background:rgba(140,160,230,.06); border:1px solid rgba(140,160,230,.18);
+    border-radius:8px;
+}
+.loop-row.activo { border-color:var(--azul-cielo); background:rgba(31,86,255,.1); box-shadow:0 0 12px rgba(31,86,255,.2); }
+.loop-nombre { flex:1; font-size:13px; font-weight:600; word-break:break-all; }
+.loop-estado { font-size:10px; letter-spacing:1px; color:var(--azul-cielo); text-transform:uppercase; white-space:nowrap; }
+.btn-usar-loop { white-space:nowrap; }
 </style>
 </head>
 <body>
@@ -141,6 +170,58 @@ $fotos = $db->query(
                     </div>
                 </div>
                 <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- === LOOP DE VIDEO === -->
+    <div class="msn-window" style="max-width:500px; margin:0 auto 18px;">
+        <div class="msn-titlebar">
+            <span class="titulo">Video de fondo &mdash; pantalla.php</span>
+            <span class="controles"><span>_</span><span>□</span><span>X</span></span>
+        </div>
+        <div class="msn-cuerpo">
+            <p class="aviso" style="margin-bottom:14px;">
+                Selecciona el video que se reproduce en la pantalla grande. Cambia en vivo sin recargar.
+            </p>
+            <p class="mensaje" id="msg-loop"></p>
+            <div id="loops-lista" class="loops-lista">
+                <p style="text-align:center; color:var(--texto-suave); padding:14px 0;">Cargando videos...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- === INVITADOS / RSVP === -->
+    <div class="msn-window" style="max-width:700px; margin:0 auto 18px;">
+        <div class="msn-titlebar">
+            <span class="titulo">Invitados confirmados (RSVP)</span>
+            <span class="controles"><span>_</span><span>□</span><span>X</span></span>
+        </div>
+        <div class="msn-cuerpo">
+            <p class="aviso" style="margin-bottom:14px;">
+                Deshabilita a quien no asista. Los deshabilitados no aparecen en la tablet de bebidas.
+            </p>
+            <p class="mensaje" id="msg-invitados"></p>
+
+            <div id="invitados-lista" class="invitados-lista">
+                <?php if (empty($invitados)): ?>
+                    <p style="text-align:center; color:var(--texto-suave); padding:20px 0;">
+                        Aún no hay invitados confirmados.
+                    </p>
+                <?php else: foreach ($invitados as $inv): ?>
+                    <div class="invitado-row <?= $inv['habilitado'] ? '' : 'deshabilitado' ?>" data-id="<?= (int)$inv['id'] ?>">
+                        <span class="invitado-nombre"><?= e($inv['nombre']) ?></span>
+                        <span class="invitado-bebidas"><?= (int)$inv['bebidas'] ?> bolsitas</span>
+                        <span class="invitado-estado"><?= $inv['habilitado'] ? 'CONFIRMADO' : 'DESHABILITADO' ?></span>
+                        <button class="btn mini btn-toggle-invitado" type="button">
+                            <?= $inv['habilitado'] ? 'DESHABILITAR' : 'HABILITAR' ?>
+                        </button>
+                    </div>
+                <?php endforeach; endif; ?>
+            </div>
+
+            <div class="menu-opciones" style="margin-top:14px;">
+                <a class="btn secundario" href="../bebidas.php" target="_blank" rel="noopener">ABRIR TABLET DE BEBIDAS</a>
             </div>
         </div>
     </div>

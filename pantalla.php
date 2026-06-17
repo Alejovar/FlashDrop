@@ -16,7 +16,7 @@ af_security_headers();
 </head>
 <body class="pantalla-body">
 
-<video id="visual" class="visual-loop" src="video/loop.mp4" autoplay muted loop playsinline></video>
+<video id="visual" class="visual-loop" src="video/loops/loop.mp4" autoplay muted loop playsinline></video>
 
 <!-- HUD -->
 <div id="hud" class="hud">
@@ -25,6 +25,12 @@ af_security_headers();
     <div class="hud-row"><span class="hud-num" id="hud-online">1</span><span class="hud-label">ONLINE</span></div>
     <div class="hud-row hud-live"><span class="hud-dot"></span><span class="hud-label">LIVE</span></div>
     <div class="hud-sep">━━━━━━━━━━━━━━━━━</div>
+</div>
+
+<!-- Leaderboard de bebidas -->
+<div id="leaderboard" class="leaderboard" hidden>
+    <div class="leaderboard-titulo">TOP BOLSITAS</div>
+    <div id="leaderboard-lista" class="leaderboard-lista"></div>
 </div>
 
 <!-- Ventana MSN nueva foto -->

@@ -51,6 +51,27 @@ $evento = [
             CÓMO LLEGAR
         </button>
     </div>
+
+    <!-- RSVP — CONFIRMAR ASISTENCIA -->
+    <div class="rsvp-section">
+        <h2 class="inv-section-title">CONFIRMAR ASISTENCIA</h2>
+
+        <div id="rsvp-form-wrap">
+            <form id="rsvp-form" class="rsvp-form" autocomplete="off">
+                <input
+                    type="text"
+                    id="rsvp-nombre"
+                    name="nombre"
+                    class="rsvp-input"
+                    placeholder="Tu nombre completo"
+                    maxlength="80"
+                    required
+                >
+                <button class="btn rsvp-btn" type="submit">CONFIRMAR</button>
+            </form>
+            <p class="rsvp-msg" id="rsvp-msg"></p>
+        </div>
+    </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>

@@ -152,4 +152,129 @@
         });
     }
 
+    // --- Invitados / RSVP toggle ---
+    const msgInvitados = document.getElementById('msg-invitados');
+
+    function avisoInvitados(texto, ok) {
+        if (!msgInvitados) return;
+        msgInvitados.textContent = texto;
+        msgInvitados.className   = 'mensaje ' + (ok ? 'ok' : 'error');
+        clearTimeout(avisoInvitados._t);
+        avisoInvitados._t = setTimeout(() => { msgInvitados.textContent = ''; }, 3500);
+    }
+
+    document.querySelectorAll('.btn-toggle-invitado').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const row = btn.closest('.invitado-row');
+            const id  = row.dataset.id;
+
+            btn.disabled = true;
+            try {
+                const fd = new FormData();
+                fd.append('id', id);
+                const res  = await fetch('../api/invitado_toggle.php', {
+                    method:  'POST',
+                    body:    fd,
+                    headers: { 'X-CSRF-Token': csrf },
+                });
+                const data = await res.json();
+
+                if (data.ok) {
+                    row.classList.toggle('deshabilitado', !data.habilitado);
+                    row.querySelector('.invitado-estado').textContent =
+                        data.habilitado ? 'CONFIRMADO' : 'DESHABILITADO';
+                    btn.textContent = data.habilitado ? 'DESHABILITAR' : 'HABILITAR';
+                    avisoInvitados(
+                        data.habilitado ? 'Invitado habilitado.' : 'Invitado deshabilitado.',
+                        true
+                    );
+                } else {
+                    avisoInvitados(data.error || 'Error', false);
+                }
+            } catch (e) {
+                avisoInvitados('Sin conexion con el servidor.', false);
+            } finally {
+                btn.disabled = false;
+            }
+        });
+    });
+
+    // --- Selector de video loop ---
+    const loopsLista = document.getElementById('loops-lista');
+    const msgLoop    = document.getElementById('msg-loop');
+
+    function avisoLoop(texto, ok) {
+        if (!msgLoop) return;
+        msgLoop.textContent = texto;
+        msgLoop.className   = 'mensaje ' + (ok ? 'ok' : 'error');
+        clearTimeout(avisoLoop._t);
+        avisoLoop._t = setTimeout(() => { msgLoop.textContent = ''; }, 3500);
+    }
+
+    function escapeHtmlAdmin(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    function renderLoops(videos, actual) {
+        if (!loopsLista) return;
+        if (!videos.length) {
+            loopsLista.innerHTML = '<p style="text-align:center; color:var(--texto-suave); padding:14px 0;">No hay videos en video/loops/</p>';
+            return;
+        }
+        loopsLista.innerHTML = videos.map(v => `
+            <div class="loop-row ${v === actual ? 'activo' : ''}" data-archivo="${escapeHtmlAdmin(v)}">
+                <span class="loop-nombre">${escapeHtmlAdmin(v)}</span>
+                ${v === actual
+                    ? '<span class="loop-estado">EN USO</span>'
+                    : '<button class="btn mini btn-usar-loop" type="button">USAR ESTE</button>'}
+            </div>
+        `).join('');
+
+        loopsLista.querySelectorAll('.btn-usar-loop').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const row = btn.closest('.loop-row');
+                const archivo = row.dataset.archivo;
+                btn.disabled = true;
+                btn.textContent = 'CAMBIANDO...';
+                try {
+                    const fd = new FormData();
+                    fd.append('archivo', archivo);
+                    const res  = await fetch('../api/loop_cambiar.php', {
+                        method:  'POST',
+                        body:    fd,
+                        headers: { 'X-CSRF-Token': csrf },
+                    });
+                    const data = await res.json();
+                    if (data.ok) {
+                        avisoLoop('Video cambiado. Se actualizará en pantalla.php en unos segundos.', true);
+                        cargarLoops();
+                    } else {
+                        avisoLoop(data.error || 'Error', false);
+                        btn.disabled = false;
+                        btn.textContent = 'USAR ESTE';
+                    }
+                } catch (e) {
+                    avisoLoop('Sin conexion con el servidor.', false);
+                    btn.disabled = false;
+                    btn.textContent = 'USAR ESTE';
+                }
+            });
+        });
+    }
+
+    async function cargarLoops() {
+        if (!loopsLista) return;
+        try {
+            const res  = await fetch('../api/loops_listar.php', { cache: 'no-store' });
+            const data = await res.json();
+            if (data.ok) renderLoops(data.videos, data.actual);
+        } catch (e) {
+            loopsLista.innerHTML = '<p style="text-align:center; color:var(--texto-suave); padding:14px 0;">Sin conexion con el servidor.</p>';
+        }
+    }
+
+    cargarLoops();
+
 })();

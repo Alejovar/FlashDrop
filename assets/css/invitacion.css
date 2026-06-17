@@ -209,3 +209,91 @@
         letter-spacing: 1.5px;
     }
 }
+/* ============================================================
+   RSVP
+   ============================================================ */
+.rsvp-section {
+    margin-top: 40px;
+    padding: 24px;
+    background: rgba(4, 5, 13, .7);
+    border: 1px solid rgba(111, 179, 255, .2);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.rsvp-form {
+    display: flex;
+    gap: 10px;
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+.rsvp-input {
+    flex: 1;
+    background: rgba(0, 0, 0, .4);
+    border: 1px solid rgba(111, 179, 255, .35);
+    border-radius: 6px;
+    padding: 12px 14px;
+    color: #fff;
+    font-family: 'Tahoma', sans-serif;
+    font-size: 14px;
+}
+
+.rsvp-input:focus {
+    outline: none;
+    border-color: rgba(111, 179, 255, .8);
+    box-shadow: 0 0 12px rgba(31, 86, 255, .4);
+}
+
+.rsvp-input::placeholder {
+    color: rgba(255, 255, 255, .4);
+}
+
+.rsvp-btn {
+    font-size: 13px;
+    padding: 12px 24px;
+    letter-spacing: 1px;
+    background: linear-gradient(180deg, #2a5bd7, #1a47c2);
+    border: 1px solid #7a9ae8;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all .3s ease;
+}
+
+.rsvp-btn:hover:not(:disabled) {
+    background: linear-gradient(180deg, #3a6bed, #2a57d2);
+    box-shadow: 0 0 16px rgba(31, 86, 255, .5);
+}
+
+.rsvp-btn:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.rsvp-msg {
+    margin-top: 14px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, .7);
+}
+
+.rsvp-msg.ok {
+    color: #6fff9e;
+    font-size: 15px;
+}
+
+.rsvp-msg.error {
+    color: #ff8888;
+}
+
+@media (max-width: 480px) {
+    .rsvp-form {
+        flex-direction: column;
+    }
+
+    .rsvp-btn {
+        width: 100%;
+    }
+}

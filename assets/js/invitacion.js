@@ -60,4 +60,49 @@
 
         return map;
     };
+
+    // --- RSVP: confirmar asistencia ---
+    const form     = document.getElementById('rsvp-form');
+    const input    = document.getElementById('rsvp-nombre');
+    const msg      = document.getElementById('rsvp-msg');
+    const formWrap = document.getElementById('rsvp-form-wrap');
+
+    if (form) {
+        const yaConfirmado = localStorage.getItem('af_rsvp_confirmado');
+        if (yaConfirmado) {
+            formWrap.innerHTML = '<p class="rsvp-msg ok">Ya confirmaste tu asistencia como <strong>' + yaConfirmado + '</strong></p>';
+        } else {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const nombre = input.value.trim();
+                if (!nombre) return;
+
+                const btn = form.querySelector('button[type="submit"]');
+                btn.disabled = true;
+                btn.textContent = 'ENVIANDO...';
+
+                try {
+                    const fd = new FormData();
+                    fd.append('nombre', nombre);
+                    const res  = await fetch('api/rsvp.php', { method: 'POST', body: fd });
+                    const data = await res.json();
+
+                    if (data.ok) {
+                        localStorage.setItem('af_rsvp_confirmado', nombre);
+                        formWrap.innerHTML = '<p class="rsvp-msg ok">Asistencia confirmada, ' + nombre + '. Te esperamos.</p>';
+                    } else {
+                        msg.textContent = data.error || 'No se pudo confirmar. Intenta de nuevo.';
+                        msg.className = 'rsvp-msg error';
+                        btn.disabled = false;
+                        btn.textContent = 'CONFIRMAR';
+                    }
+                } catch (err) {
+                    msg.textContent = 'Sin conexión con el servidor.';
+                    msg.className = 'rsvp-msg error';
+                    btn.disabled = false;
+                    btn.textContent = 'CONFIRMAR';
+                }
+            });
+        }
+    }
 })();

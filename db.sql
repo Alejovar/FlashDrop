@@ -91,3 +91,31 @@ CREATE TABLE IF NOT EXISTS test_events (
     PRIMARY KEY (id),
     KEY idx_created (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================
+-- Sistema de RSVP + Contador de bebidas
+-- ============================================================
+CREATE TABLE IF NOT EXISTS invitados (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    nombre VARCHAR(80) NOT NULL,
+    confirmado TINYINT(1) NOT NULL DEFAULT 1,
+    habilitado TINYINT(1) NOT NULL DEFAULT 1,
+    bebidas INT UNSIGNED NOT NULL DEFAULT 0,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_habilitado (habilitado)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================================
+-- Configuración global del sistema (clave/valor)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS sistema_config (
+    clave VARCHAR(64) NOT NULL,
+    valor VARCHAR(255) NOT NULL,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (clave)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO sistema_config (clave, valor) VALUES ('loop_actual', 'loop.mp4')
+ON DUPLICATE KEY UPDATE valor = valor;

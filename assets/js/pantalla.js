@@ -183,12 +183,60 @@
     });
 
     // ---------- HUD ----------
+    let loopActual = null;
+
     function actualizarHUD(total, online) {
         if (total  !== undefined && hudTotal)  hudTotal.textContent  = total;
         if (online !== undefined && hudOnline) hudOnline.textContent = online;
     }
+
+    function cambiarLoopSiNecesario(nuevoLoop) {
+        if (!nuevoLoop || !video) return;
+        if (loopActual === null) { loopActual = nuevoLoop; return; }
+        if (nuevoLoop !== loopActual) {
+            loopActual = nuevoLoop;
+            video.src = 'video/loops/' + nuevoLoop;
+            video.load();
+            video.play().catch(() => {});
+        }
+    }
+
     async function pollStats() {
-        try { const d = await (await fetch('api/stats.php',{cache:'no-store'})).json(); if(d.ok) actualizarHUD(d.total,d.online); } catch(e){}
+        try {
+            const d = await (await fetch('api/stats.php',{cache:'no-store'})).json();
+            if (d.ok) {
+                actualizarHUD(d.total, d.online);
+                cambiarLoopSiNecesario(d.loop);
+            }
+        } catch(e) {}
+    }
+
+    // ---------- Leaderboard de bebidas ----------
+    const leaderboard      = document.getElementById('leaderboard');
+    const leaderboardLista = document.getElementById('leaderboard-lista');
+
+    function escapeHtmlLocal(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    async function pollLeaderboard() {
+        if (!leaderboard) return;
+        try {
+            const d = await (await fetch('api/bebidas_top.php', {cache:'no-store'})).json();
+            if (!d.ok) return;
+            if (!d.top.length) { leaderboard.hidden = true; return; }
+
+            leaderboard.hidden = false;
+            leaderboardLista.innerHTML = d.top.map((inv, i) => `
+                <div class="leaderboard-row">
+                    <span class="leaderboard-pos">${i + 1}</span>
+                    <span class="leaderboard-nombre">${escapeHtmlLocal(inv.nombre)}</span>
+                    <span class="leaderboard-cant">${inv.bebidas}</span>
+                </div>
+            `).join('');
+        } catch(e) {}
     }
 
     // ---------- Ventana MSN ----------
@@ -392,8 +440,10 @@
             if(video) video.play().catch(()=>{});
             await consultarFeed();
             await pollStats();
+            await pollLeaderboard();
             setInterval(consultarFeed, POLL_MS);
             setInterval(pollStats, 15000);
+            setInterval(pollLeaderboard, 10000);
         });
     }
 })();

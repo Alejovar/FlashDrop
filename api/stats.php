@@ -25,10 +25,16 @@ $online = (int)$db->query(
 // Valor mínimo de 1 (el admin siempre está) para que no quede en 0
 if ($online < 1) $online = 1;
 
+// Loop activo (para que pantalla.js detecte cambios sin polling extra)
+$stmtLoop = $db->prepare('SELECT valor FROM sistema_config WHERE clave = ? LIMIT 1');
+$stmtLoop->execute(['loop_actual']);
+$loopActual = $stmtLoop->fetchColumn() ?: 'loop.mp4';
+
 af_json([
     'ok'        => true,
     'total'     => $total,
     'online'    => $online,
     'lastHour'  => $lastHour,
     'lastPhoto' => $lastPhoto,
+    'loop'      => $loopActual,
 ]);
