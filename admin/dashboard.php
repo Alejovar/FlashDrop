@@ -73,7 +73,7 @@ $invitados = $db->query(
 .invitado-bebidas { font-size:12px; color:var(--azul-cielo); white-space:nowrap; }
 .invitado-estado { font-size:10px; letter-spacing:1px; color:var(--texto-suave); text-transform:uppercase; white-space:nowrap; }
 .invitado-row.deshabilitado .invitado-estado { color:#ff8888; }
-.btn-toggle-invitado { white-space:nowrap; }
+.btn-toggle-invitado, .btn-eliminar-invitado { white-space:nowrap; }
 
 .loops-lista { display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto; }
 .loop-row {
@@ -215,6 +215,9 @@ $invitados = $db->query(
                         <span class="invitado-estado"><?= $inv['habilitado'] ? 'CONFIRMADO' : 'DESHABILITADO' ?></span>
                         <button class="btn mini btn-toggle-invitado" type="button">
                             <?= $inv['habilitado'] ? 'DESHABILITAR' : 'HABILITAR' ?>
+                        </button>
+                        <button class="btn mini peligro btn-eliminar-invitado" type="button">
+                            ELIMINAR
                         </button>
                     </div>
                 <?php endforeach; endif; ?>

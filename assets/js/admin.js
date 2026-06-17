@@ -277,4 +277,38 @@
 
     cargarLoops();
 
+    // --- Eliminar invitado permanentemente ---
+    document.querySelectorAll('.btn-eliminar-invitado').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const row    = btn.closest('.invitado-row');
+            const id     = row.dataset.id;
+            const nombre = row.querySelector('.invitado-nombre').textContent;
+
+            if (!confirm('Eliminar permanentemente a "' + nombre + '"? Esta accion no se puede deshacer.')) return;
+
+            btn.disabled = true;
+            try {
+                const fd = new FormData();
+                fd.append('id', id);
+                const res  = await fetch('../api/invitado_eliminar.php', {
+                    method:  'POST',
+                    body:    fd,
+                    headers: { 'X-CSRF-Token': csrf },
+                });
+                const data = await res.json();
+
+                if (data.ok) {
+                    row.remove();
+                    avisoInvitados('Invitado eliminado permanentemente.', true);
+                } else {
+                    avisoInvitados(data.error || 'Error', false);
+                    btn.disabled = false;
+                }
+            } catch (e) {
+                avisoInvitados('Sin conexion con el servidor.', false);
+                btn.disabled = false;
+            }
+        });
+    });
+
 })();
