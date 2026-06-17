@@ -297,3 +297,12 @@
         width: 100%;
     }
 }
+
+.rsvp-contador {
+    margin-top: 18px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: rgba(111, 179, 255, .7);
+    text-align: center;
+}

@@ -71,6 +71,8 @@ $evento = [
             </form>
             <p class="rsvp-msg" id="rsvp-msg"></p>
         </div>
+
+        <p class="rsvp-contador" id="rsvp-contador"></p>
     </div>
 </div>
 

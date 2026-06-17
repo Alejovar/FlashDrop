@@ -66,6 +66,23 @@
     const input    = document.getElementById('rsvp-nombre');
     const msg      = document.getElementById('rsvp-msg');
     const formWrap = document.getElementById('rsvp-form-wrap');
+    const contador = document.getElementById('rsvp-contador');
+
+    async function cargarContador() {
+        if (!contador) return;
+        try {
+            const res  = await fetch('api/invitados_contador.php', { cache: 'no-store' });
+            const data = await res.json();
+            if (data.ok) {
+                const texto = data.total === 1
+                    ? '1 persona ya confirmó su asistencia'
+                    : data.total + ' personas ya confirmaron su asistencia';
+                contador.textContent = texto;
+            }
+        } catch (e) {}
+    }
+
+    cargarContador();
 
     if (form) {
         const yaConfirmado = localStorage.getItem('af_rsvp_confirmado');
@@ -90,6 +107,7 @@
                     if (data.ok) {
                         localStorage.setItem('af_rsvp_confirmado', nombre);
                         formWrap.innerHTML = '<p class="rsvp-msg ok">Asistencia confirmada, ' + nombre + '. Te esperamos.</p>';
+                        cargarContador();
                     } else {
                         msg.textContent = data.error || 'No se pudo confirmar. Intenta de nuevo.';
                         msg.className = 'rsvp-msg error';

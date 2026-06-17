@@ -256,7 +256,6 @@
 /* ============================================================ LEADERBOARD BEBIDAS */
 .leaderboard {
     position: fixed;
-    top: 130px;
     left: 26px;
     z-index: 20;
     background: rgba(4, 5, 13, .78);

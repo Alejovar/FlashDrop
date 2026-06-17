@@ -214,11 +214,18 @@
     // ---------- Leaderboard de bebidas ----------
     const leaderboard      = document.getElementById('leaderboard');
     const leaderboardLista = document.getElementById('leaderboard-lista');
+    const hudEl             = document.getElementById('hud');
 
     function escapeHtmlLocal(str) {
         const div = document.createElement('div');
         div.textContent = str;
         return div.innerHTML;
+    }
+
+    function posicionarLeaderboard() {
+        if (!leaderboard || !hudEl) return;
+        const hudRect = hudEl.getBoundingClientRect();
+        leaderboard.style.top = (hudRect.bottom + 16) + 'px';
     }
 
     async function pollLeaderboard() {
@@ -236,6 +243,7 @@
                     <span class="leaderboard-cant">${inv.bebidas}</span>
                 </div>
             `).join('');
+            posicionarLeaderboard();
         } catch(e) {}
     }
 
