@@ -409,3 +409,111 @@ body {
     line-height: 1.5;
     z-index: 61;
 }
+
+/* ============================================================
+   Modal de confirmación — estilo Y2K/MSN
+   ============================================================ */
+.confirm-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(2, 3, 12, .82);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+}
+
+.confirm-box {
+    background: var(--negro-panel);
+    border: 1px solid rgba(140, 160, 230, .4);
+    border-radius: 8px;
+    max-width: 380px;
+    width: 100%;
+    box-shadow: 0 0 40px rgba(31, 86, 255, .3), 0 10px 40px rgba(0,0,0,.6);
+    overflow: hidden;
+}
+
+.confirm-titlebar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: linear-gradient(180deg, #2a5bd7 0%, #1a47c2 45%, #1a3db0 46%, #1e44be 100%);
+}
+
+.confirm-titlebar .titulo {
+    font-size: 12px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0,0,0,.5);
+    letter-spacing: .5px;
+}
+
+.confirm-titlebar .controles {
+    display: flex;
+    gap: 3px;
+}
+
+.confirm-titlebar .controles span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 14px;
+    font-size: 10px;
+    border-radius: 3px;
+    border: 1px solid rgba(255,255,255,.3);
+    color: #fff;
+    background: linear-gradient(180deg, #5a8ee8, #3a6ed0);
+}
+
+.confirm-body {
+    padding: 20px 18px;
+}
+
+.confirm-mensaje {
+    font-size: 13px;
+    color: var(--texto);
+    line-height: 1.6;
+    margin-bottom: 18px;
+}
+
+.confirm-mensaje strong {
+    color: var(--azul-cielo);
+}
+
+.confirm-botones {
+    display: flex;
+    gap: 10px;
+}
+
+.confirm-botones button {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .5px;
+    cursor: pointer;
+    border: 1px solid rgba(140,160,230,.4);
+    background: rgba(140,160,230,.08);
+    color: var(--texto);
+    transition: all .2s ease;
+}
+
+.confirm-botones button:hover {
+    background: rgba(140,160,230,.18);
+}
+
+.confirm-botones .confirm-btn-eliminar {
+    background: linear-gradient(180deg, #e85050, #c83030);
+    border-color: rgba(255,90,90,.5);
+    color: #fff;
+}
+
+.confirm-botones .confirm-btn-eliminar:hover {
+    background: linear-gradient(180deg, #ff6060, #d84040);
+    box-shadow: 0 0 16px rgba(255,80,80,.4);
+}

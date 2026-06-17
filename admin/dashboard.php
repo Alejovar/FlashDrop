@@ -229,7 +229,7 @@ $invitados = $db->query(
         </div>
     </div>
 
-    <!-- === TEST DE ANIMACIONES 1=== -->
+    <!-- === TEST DE ANIMACIONES === -->
     <div class="msn-window" style="max-width:500px; margin:0 auto 18px;">
         <div class="msn-titlebar">
             <span class="titulo">Test de animaciones &mdash; pantalla.php</span>
@@ -285,6 +285,24 @@ $invitados = $db->query(
         <a class="btn peligro" href="logout.php">CERRAR SESION</a>
     </div>
 </div>
+
+<!-- Modal de confirmación Y2K/MSN -->
+<div id="confirm-overlay" class="confirm-overlay" hidden>
+    <div class="confirm-box">
+        <div class="confirm-titlebar">
+            <span class="titulo">Confirmar acción</span>
+            <span class="controles"><span>_</span><span>□</span><span>X</span></span>
+        </div>
+        <div class="confirm-body">
+            <p class="confirm-mensaje" id="confirm-mensaje"></p>
+            <div class="confirm-botones">
+                <button type="button" id="confirm-btn-cancelar">CANCELAR</button>
+                <button type="button" id="confirm-btn-aceptar" class="confirm-btn-eliminar">ELIMINAR</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="../assets/js/admin.js"></script>
 </body>
 </html>

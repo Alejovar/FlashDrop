@@ -5,6 +5,36 @@
     const csrf = document.querySelector('meta[name="csrf"]').content;
     const msg  = document.getElementById('msg-admin');
 
+    // --- Modal de confirmación custom (reemplaza confirm() nativo) ---
+    const confirmOverlay    = document.getElementById('confirm-overlay');
+    const confirmMensaje    = document.getElementById('confirm-mensaje');
+    const confirmBtnAceptar = document.getElementById('confirm-btn-aceptar');
+    const confirmBtnCancelar = document.getElementById('confirm-btn-cancelar');
+
+    function confirmarAccion(mensajeHtml) {
+        return new Promise(resolve => {
+            if (!confirmOverlay) { resolve(false); return; }
+
+            confirmMensaje.innerHTML = mensajeHtml;
+            confirmOverlay.hidden = false;
+
+            function limpiar(resultado) {
+                confirmOverlay.hidden = true;
+                confirmBtnAceptar.removeEventListener('click', onAceptar);
+                confirmBtnCancelar.removeEventListener('click', onCancelar);
+                confirmOverlay.removeEventListener('click', onOverlayClick);
+                resolve(resultado);
+            }
+            function onAceptar() { limpiar(true); }
+            function onCancelar() { limpiar(false); }
+            function onOverlayClick(e) { if (e.target === confirmOverlay) limpiar(false); }
+
+            confirmBtnAceptar.addEventListener('click', onAceptar);
+            confirmBtnCancelar.addEventListener('click', onCancelar);
+            confirmOverlay.addEventListener('click', onOverlayClick);
+        });
+    }
+
     function aviso(texto, ok) {
         msg.textContent = texto;
         msg.className   = 'mensaje ' + (ok ? 'ok' : 'error');
@@ -67,7 +97,8 @@
 
         if (btnDelete) {
             btnDelete.addEventListener('click', async () => {
-                if (!confirm('Eliminar permanentemente esta foto? Esta accion no se puede deshacer.')) return;
+                const ok = await confirmarAccion('¿Eliminar permanentemente esta foto? Esta acción <strong>no se puede deshacer</strong>.');
+                if (!ok) return;
                 btnDelete.disabled = true;
                 try {
                     const data = await accion('delete', id);
@@ -284,7 +315,8 @@
             const id     = row.dataset.id;
             const nombre = row.querySelector('.invitado-nombre').textContent;
 
-            if (!confirm('Eliminar permanentemente a "' + nombre + '"? Esta accion no se puede deshacer.')) return;
+            const ok = await confirmarAccion('¿Eliminar permanentemente a <strong>' + nombre + '</strong>? Esta acción <strong>no se puede deshacer</strong>.');
+            if (!ok) return;
 
             btn.disabled = true;
             try {
