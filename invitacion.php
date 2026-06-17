@@ -13,8 +13,8 @@ $evento = [
     'hora'      => '8:00 PM',
     'dress'     => 'Y2K Mode ON',
     'direccion' => 'Francisco Márquez 119, Saltillo, Coahuila 25084',
-    'lat'       => 25.4290,
-    'lng'       => -101.0032,
+    'lat'       => 25.3565279,
+    'lng'       => -101.0062172,
 ];
 ?>
 <!DOCTYPE html>
