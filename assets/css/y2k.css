@@ -425,6 +425,10 @@ body {
     backdrop-filter: blur(4px);
 }
 
+.confirm-overlay[hidden] {
+    display: none;
+}
+
 .confirm-box {
     background: var(--negro-panel);
     border: 1px solid rgba(140, 160, 230, .4);
