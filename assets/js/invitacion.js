@@ -2,61 +2,54 @@
 (function () {
     'use strict';
 
-    // --- Modal de selección de maps ---
+    // Botón "Cómo llegar" — abre directo las opciones de maps
     const btnComoLlegar = document.getElementById('btn-como-llegar');
-    const mapsModal = document.getElementById('maps-modal');
-    const btnCerrarModal = document.getElementById('btn-cerrar-modal');
 
     if (btnComoLlegar) {
         btnComoLlegar.addEventListener('click', () => {
-            mapsModal.hidden = false;
-        });
-    }
+            const direccion = 'Francisco Márquez 119, Saltillo, Coahuila 25084';
+            const lat = 25.4290;
+            const lng = -101.0032;
 
-    if (btnCerrarModal) {
-        btnCerrarModal.addEventListener('click', () => {
-            mapsModal.hidden = true;
-        });
-    }
+            // Detectar dispositivo
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            const isAndroid = /Android/.test(navigator.userAgent);
 
-    // Cerrar modal al hacer clic afuera
-    if (mapsModal) {
-        mapsModal.addEventListener('click', (e) => {
-            if (e.target === mapsModal) {
-                mapsModal.hidden = true;
+            if (isIOS) {
+                // iOS — intenta Apple Maps primero, fallback a Google Maps
+                const appleMapsURL = `https://maps.apple.com/?q=${encodeURIComponent(direccion)}`;
+                const googleMapsURL = `https://maps.google.com/?q=${lat},${lng}`;
+                
+                // Intentar abrir Apple Maps
+                window.location.href = appleMapsURL;
+                
+                // Si no abre Apple Maps en 2 segundos, intenta Google Maps
+                setTimeout(() => {
+                    window.location.href = googleMapsURL;
+                }, 2000);
+            } else {
+                // Android y desktop — Google Maps directo
+                const googleMapsURL = `https://maps.google.com/?q=${encodeURIComponent(direccion)}`;
+                window.open(googleMapsURL, '_blank');
             }
         });
     }
 
-    // --- Inicializar mapa con Leaflet ---
+    // Inicializar mapa con Leaflet
     window.inicializarMapa = function(evento) {
         const mapEl = document.getElementById('inv-map');
         if (!mapEl) return;
 
-        // Crear mapa centrado en la ubicación
         const map = L.map('inv-map').setView([evento.lat, evento.lng], 15);
 
-        // Layer de OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors',
+            attribution: '© OpenStreetMap',
             maxZoom: 18,
         }).addTo(map);
 
-        // Crear un marcador personalizado con el logo del evento
-        // Si tienes un logo, lo puedes usar; por ahora usamos un marcador estándar
-        const marker = L.marker([evento.lat, evento.lng], {
-            title: evento.nombre,
-        }).addTo(map);
-
-        // Popup con la información
-        marker.bindPopup(`
-            <div style="text-align:center; font-family: Tahoma; color: #333;">
-                <strong style="font-size:14px; color:#1f56ff;">${evento.nombre}</strong><br>
-                <span style="font-size:12px; color:#666;">${evento.direccion}</span>
-            </div>
-        `);
-
-        // Abrir el popup por defecto
+        const marker = L.marker([evento.lat, evento.lng]).addTo(map);
+        marker.bindPopup(`<strong>${evento.nombre}</strong><br>${evento.direccion}`);
         marker.openPopup();
 
         return map;

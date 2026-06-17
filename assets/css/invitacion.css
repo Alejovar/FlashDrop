@@ -1,25 +1,22 @@
 /* invitacion.css */
 
-.invitacion-body {
+.inv-body {
     background: #000;
     color: #fff;
     font-family: 'Tahoma', 'Verdana', sans-serif;
     margin: 0;
     padding: 0;
-    overflow-x: hidden;
 }
 
 /* ============================================================
-   VIDEO PORTADA
+   VIDEO LOOP
    ============================================================ */
-.inv-video-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 60vh;
-    z-index: 1;
+.inv-video-section {
+    width: 100%;
+    height: 45vh;
     overflow: hidden;
+    position: relative;
+    z-index: 1;
 }
 
 .inv-video {
@@ -28,139 +25,102 @@
     object-fit: cover;
 }
 
-.inv-video-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.8) 100%);
+/* ============================================================
+   CONTENEDOR PRINCIPAL
+   ============================================================ */
+.inv-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 16px 40px;
+}
+
+/* ============================================================
+   IMAGEN INVITACIÓN
+   ============================================================ */
+.inv-image-wrapper {
+    margin-top: -60px;
+    margin-bottom: 40px;
+    position: relative;
     z-index: 2;
 }
 
-/* ============================================================
-   INVITACIÓN CARD
-   ============================================================ */
-.inv-card {
-    position: relative;
-    z-index: 3;
-    margin-top: 50vh;
-    background: linear-gradient(180deg, rgba(4,5,13,.95), rgba(2,3,12,1));
-    border: 1px solid rgba(111, 179, 255, .3);
-    border-radius: 12px;
-    padding: clamp(24px, 4vw, 48px);
-    max-width: min(95vw, 900px);
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 40px;
-    box-shadow: 0 0 40px rgba(31, 86, 255, .25), inset 0 1px 0 rgba(255, 255, 255, .05);
-}
-
-.inv-header {
-    text-align: center;
-    margin-bottom: clamp(20px, 3vh, 40px);
-}
-
-.inv-titulo {
-    font-family: 'Arial Black', 'Impact', sans-serif;
-    font-size: clamp(32px, 6vw, 72px);
-    font-weight: 900;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    background: linear-gradient(180deg, #fff, #88aaff, #7eb3ff);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    text-shadow: 0 0 20px rgba(111, 179, 255, .8);
-    margin: 0;
-    line-height: 1;
-    filter: drop-shadow(0 0 15px rgba(31, 86, 255, .6));
+.inv-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, .6);
+    max-width: 100%;
 }
 
 /* ============================================================
-   DETALLES
+   UBICACIÓN
    ============================================================ */
-.inv-details {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: clamp(12px, 2vh, 20px);
-    margin-bottom: clamp(28px, 4vh, 48px);
-}
-
-.inv-detail {
-    display: flex;
-    align-items: flex-start;
-    gap: clamp(12px, 2vw, 18px);
-    padding: clamp(12px, 2vh, 16px);
-    background: rgba(111, 179, 255, .05);
+.inv-location-section {
+    margin-bottom: 36px;
+    padding: 24px;
+    background: rgba(4, 5, 13, .7);
     border: 1px solid rgba(111, 179, 255, .2);
     border-radius: 8px;
 }
 
-.inv-icon {
-    font-size: clamp(20px, 3vw, 28px);
-    flex-shrink: 0;
-}
-
-.inv-detail > div {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex: 1;
-}
-
-.inv-label {
+.inv-section-title {
     font-family: 'Courier New', monospace;
-    font-size: clamp(10px, 1.2vw, 12px);
-    letter-spacing: 2px;
-    color: rgba(111, 179, 255, .7);
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: rgba(111, 179, 255, .8);
     text-transform: uppercase;
+    margin: 0 0 12px 0;
+    font-weight: 600;
 }
 
-.inv-value {
-    font-family: 'Tahoma', sans-serif;
-    font-size: clamp(13px, 1.8vw, 18px);
-    font-weight: 600;
-    color: #fff;
-    word-break: break-word;
+.inv-address {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #e8eef8;
+    margin: 0;
+    font-weight: 500;
 }
 
 /* ============================================================
-   SECCIÓN MAPA
+   MAPA
    ============================================================ */
 .inv-map-section {
-    margin-bottom: clamp(28px, 4vh, 48px);
-}
-
-.inv-section-title {
-    font-family: 'Courier New', monospace;
-    font-size: clamp(12px, 1.5vw, 16px);
-    letter-spacing: 3px;
-    color: #b0c4ff;
-    text-transform: uppercase;
-    margin: 0 0 clamp(12px, 2vh, 20px) 0;
-    text-shadow: 0 0 10px rgba(111, 179, 255, .6);
+    margin-bottom: 28px;
 }
 
 .inv-map {
     width: 100%;
-    height: 320px;
-    border-radius: 10px;
-    border: 2px solid rgba(111, 179, 255, .4);
+    height: 360px;
+    border-radius: 8px;
+    border: 1px solid rgba(111, 179, 255, .3);
     overflow: hidden;
-    box-shadow: 0 0 30px rgba(31, 86, 255, .2);
+    box-shadow: 0 4px 16px rgba(31, 86, 255, .15);
 }
 
-/* Estilos de Leaflet customizados */
+/* Leaflet customization */
 .inv-map .leaflet-control-attribution {
-    background: rgba(0, 0, 0, .7);
-    color: rgba(255, 255, 255, .6);
+    background: rgba(0, 0, 0, .6);
+    color: rgba(255, 255, 255, .5);
     font-size: 10px;
+    border: none;
+}
+
+.inv-map .leaflet-control-zoom {
+    border: 1px solid rgba(111, 179, 255, .3);
+    border-radius: 4px;
+    overflow: hidden;
 }
 
 .inv-map .leaflet-control-zoom-in,
 .inv-map .leaflet-control-zoom-out {
-    background: rgba(4, 5, 13, .9);
-    border: 1px solid rgba(111, 179, 255, .4);
+    background: rgba(4, 5, 13, .85);
+    border: none;
     color: #7eb3ff;
     font-weight: bold;
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
 }
 
 .inv-map .leaflet-control-zoom-in:hover,
@@ -169,29 +129,30 @@
 }
 
 /* ============================================================
-   BOTÓN "CÓMO LLEGAR"
+   BOTÓN CÓMO LLEGAR
    ============================================================ */
 .inv-action {
     text-align: center;
 }
 
 .inv-btn {
-    font-size: clamp(13px, 2vw, 18px);
-    padding: clamp(12px, 2vh, 18px) clamp(28px, 5vw, 48px);
+    font-size: 15px;
+    padding: 14px 48px;
     letter-spacing: 2px;
     background: linear-gradient(180deg, #2a5bd7, #1a47c2);
     border: 2px solid #7a9ae8;
-    border-radius: 8px;
+    border-radius: 6px;
     color: #fff;
     cursor: pointer;
     transition: all .3s ease;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, .5);
-    box-shadow: 0 0 20px rgba(31, 86, 255, .4), inset 0 1px 0 rgba(255, 255, 255, .2);
+    text-transform: uppercase;
+    font-weight: 600;
+    box-shadow: 0 0 20px rgba(31, 86, 255, .3);
 }
 
 .inv-btn:hover {
     background: linear-gradient(180deg, #3a6bed, #2a57d2);
-    box-shadow: 0 0 40px rgba(31, 86, 255, .8), inset 0 1px 0 rgba(255, 255, 255, .3);
+    box-shadow: 0 0 30px rgba(31, 86, 255, .6);
     transform: translateY(-2px);
 }
 
@@ -200,211 +161,80 @@
 }
 
 /* ============================================================
-   MODAL MAPS
+   RESPONSIVE
    ============================================================ */
-.maps-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 100;
-    background: rgba(0, 0, 0, .85);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
-
-.maps-modal-content {
-    background: linear-gradient(180deg, rgba(4, 5, 13, .98), rgba(2, 3, 12, 1));
-    border: 2px solid rgba(111, 179, 255, .5);
-    border-radius: 12px;
-    padding: clamp(24px, 4vw, 40px);
-    max-width: 400px;
-    width: 100%;
-    box-shadow: 0 0 60px rgba(31, 86, 255, .4);
-    text-align: center;
-}
-
-.maps-modal-title {
-    font-family: 'Courier New', monospace;
-    font-size: clamp(14px, 2vw, 18px);
-    letter-spacing: 3px;
-    color: #b0c4ff;
-    text-transform: uppercase;
-    margin: 0 0 24px 0;
-    text-shadow: 0 0 12px rgba(111, 179, 255, .6);
-}
-
-.maps-modal-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 16px;
-}
-
-.maps-btn {
-    display: block;
-    padding: clamp(12px, 2vh, 16px) 20px;
-    background: linear-gradient(180deg, #2a5bd7, #1a47c2);
-    border: 1px solid #7a9ae8;
-    border-radius: 6px;
-    color: #fff;
-    text-decoration: none;
-    font-size: clamp(13px, 1.6vw, 16px);
-    font-weight: 600;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: all .3s ease;
-    text-transform: uppercase;
-}
-
-.maps-btn:hover {
-    background: linear-gradient(180deg, #3a6bed, #2a57d2);
-    box-shadow: 0 0 20px rgba(31, 86, 255, .6);
-    transform: translateY(-2px);
-}
-
-.maps-btn.cerrar {
-    background: rgba(255, 50, 50, .2);
-    border-color: rgba(255, 80, 80, .4);
-    color: #ffaaaa;
-}
-
-.maps-btn.cerrar:hover {
-    background: rgba(255, 50, 50, .3);
-    box-shadow: 0 0 15px rgba(255, 80, 80, .3);
-}
-
-/* Responsive */
 @media (max-width: 768px) {
-    .inv-video-container {
-        height: 50vh;
+    .inv-video-section {
+        height: 40vh;
     }
 
-    .inv-card {
-        margin-top: 48vh;
-        border-radius: 6px;
-        padding: 16px;
-        margin-left: 8px;
-        margin-right: 8px;
+    .inv-container {
+        padding: 0 12px 32px;
     }
 
-    .inv-titulo {
-        font-size: clamp(24px, 5vw, 48px);
-        letter-spacing: 2px;
+    .inv-image-wrapper {
+        margin-top: -50px;
+        margin-bottom: 32px;
     }
 
-    .inv-details {
-        gap: 10px;
+    .inv-location-section {
         margin-bottom: 24px;
+        padding: 18px;
     }
 
-    .inv-detail {
-        padding: 10px;
-        gap: 10px;
-    }
-
-    .inv-icon {
-        font-size: 20px;
-    }
-
-    .inv-label {
-        font-size: 9px;
-        letter-spacing: 1px;
-    }
-
-    .inv-value {
-        font-size: 14px;
+    .inv-address {
+        font-size: 15px;
     }
 
     .inv-map {
-        height: 280px;
-        border-radius: 8px;
+        height: 300px;
     }
 
     .inv-btn {
         font-size: 14px;
-        padding: 14px 24px;
-        letter-spacing: 1.5px;
+        padding: 12px 36px;
         width: 100%;
         box-sizing: border-box;
-    }
-
-    .maps-modal-content {
-        padding: 20px;
-        border-radius: 10px;
-    }
-
-    .maps-modal-title {
-        font-size: 14px;
-        margin-bottom: 18px;
-        letter-spacing: 2px;
-    }
-
-    .maps-modal-buttons {
-        gap: 10px;
-        margin-bottom: 12px;
-    }
-
-    .maps-btn {
-        padding: 12px 16px;
-        font-size: 13px;
-        letter-spacing: 1px;
-    }
-
-    .inv-section-title {
-        font-size: 12px;
-        margin-bottom: 12px;
-        letter-spacing: 2px;
     }
 }
 
 @media (max-width: 480px) {
-    .inv-video-container {
-        height: 45vh;
+    .inv-video-section {
+        height: 35vh;
     }
 
-    .inv-card {
-        margin-top: 43vh;
-        padding: 12px;
-        margin-left: 4px;
-        margin-right: 4px;
+    .inv-container {
+        padding: 0 10px 24px;
     }
 
-    .inv-titulo {
-        font-size: 22px;
-        letter-spacing: 1px;
+    .inv-image-wrapper {
+        margin-top: -40px;
+        margin-bottom: 24px;
     }
 
-    .inv-detail {
-        padding: 8px;
-        gap: 8px;
+    .inv-location-section {
+        margin-bottom: 20px;
+        padding: 16px;
     }
 
-    .inv-icon {
-        font-size: 18px;
+    .inv-section-title {
+        font-size: 11px;
+        letter-spacing: 2px;
+        margin-bottom: 10px;
     }
 
-    .inv-value {
-        font-size: 13px;
+    .inv-address {
+        font-size: 14px;
+        line-height: 1.5;
     }
 
     .inv-map {
-        height: 240px;
+        height: 260px;
     }
 
     .inv-btn {
-        font-size: 12px;
-        padding: 12px 16px;
-        width: 100%;
-    }
-
-    .maps-modal-content {
-        padding: 16px;
-        max-width: 90%;
-    }
-
-    .maps-btn {
-        padding: 10px 12px;
-        font-size: 12px;
+        font-size: 13px;
+        padding: 11px 24px;
+        letter-spacing: 1.5px;
     }
 }
