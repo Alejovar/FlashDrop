@@ -1,6 +1,0 @@
-FLASHDROP — Coloca aquí tus PNG:
-- logo.png    (logo FLASHDROP — también se usa como marca de agua)
-- monito.png  (el personaje)
-- marco.png   (el marco del espejo, opcional para decorar)
-
-No se vectorizan: se usan tal cual.
