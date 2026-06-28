@@ -2,9 +2,9 @@ stages:
   - validate
   - deploy
 
-# ------------------------------------------------------------
+
 # VALIDACIÓN — sintaxis PHP
-# ------------------------------------------------------------
+
 validate_php:
   stage: validate
   image: php:8.3-cli
@@ -13,9 +13,9 @@ validate_php:
   only:
     - main
 
-# ------------------------------------------------------------
+
 # DEPLOY A PRODUCCIÓN
-# ------------------------------------------------------------
+
 deploy_production:
   stage: deploy
   image: alpine:latest
@@ -26,6 +26,7 @@ deploy_production:
     - ssh-keyscan -H $DEPLOY_HOST >> ~/.ssh/known_hosts 2>/dev/null
     - ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} "sudo mkdir -p /var/www/flashdrop && sudo chown -R ${DEPLOY_USER}:www-data /var/www/flashdrop"
     - rsync -az --delete --exclude=".git" --exclude="uploads" --exclude="video" -e "ssh -i ~/.ssh/deploy_key" ./ ${DEPLOY_USER}@${DEPLOY_HOST}:/var/www/flashdrop/
+    - ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST} "printf '<?php\ndefine(\"DB_HOST\", \"%s\");\ndefine(\"DB_NAME\", \"%s\");\ndefine(\"DB_USER\", \"%s\");\ndefine(\"DB_PASS\", \"%s\");\n' '${DB_HOST}' '${DB_NAME}' '${DB_USER}' '${DB_PASS}' > /var/www/flashdrop/config_db.php"
     - >-
       ssh -i ~/.ssh/deploy_key ${DEPLOY_USER}@${DEPLOY_HOST}
       "set -e;

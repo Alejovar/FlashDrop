@@ -1,21 +1,20 @@
 <?php
 // ============================================================
 //  FLASHDROP v2 — Configuración
-//  NUNCA subas config.php a un repositorio público.
+//  Las credenciales de BD viven en config_db.php,
+//  generado automáticamente por el pipeline con variables de GitLab.
+//  config_db.php NUNCA se sube al repositorio (.gitignore).
 // ============================================================
 
-// --- Base de datos ---
-define('DB_HOST', '127.0.0.1');
-define('DB_NAME', 'flashdrop');
-define('DB_USER', 'flashdrop_app');
-define('DB_PASS', 'WDo6MCOT5FNkLGrbANS++A==');
+// --- Base de datos (generado por el pipeline, no en el repo) ---
+require_once __DIR__ . '/config_db.php';
 
 // --- Subidas ---
 define('MAX_UPLOAD_MB', 12);
 define('MAX_DIMENSION', 1920);
-define('JPEG_QUALITY', 92);                         // calidad alta para conservar originales
-define('UPLOADS_DIR',   __DIR__ . '/uploads/originals');   // originales sin marca de agua
-define('UPLOADS_URL',   'uploads/originals');              // ruta pública relativa
+define('JPEG_QUALITY', 92);
+define('UPLOADS_DIR',   __DIR__ . '/uploads/originals');
+define('UPLOADS_URL',   'uploads/originals');
 
 // --- Logo para Polaroid ---
 define('LOGO_PATH',     __DIR__ . '/assets/logo.png');
@@ -26,11 +25,11 @@ define('UPLOADS_PER_MINUTE_PER_IP', 4);
 
 // --- Pantalla grande ---
 define('FEED_POLL_SECONDS', 3);
-define('TOAST_SECONDS',     10);    // ventana MSN nueva foto
-define('FEATURE_SECONDS',   10);    // ventana destacada visible
+define('TOAST_SECONDS',     10);
+define('FEATURE_SECONDS',   10);
 
 // --- Logros (milestones) ---
-define('MILESTONE_EVERY', 15);      // cada N fotos se activa un logro
+define('MILESTONE_EVERY', 15);
 
 // --- Sesión / seguridad ---
 define('SESSION_NAME',            'ALEJOFEST_SESS');
